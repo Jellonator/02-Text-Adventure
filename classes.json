@@ -1,0 +1,42 @@
+{
+    "WARRIOR": {
+        "stats": {
+            "STR": 5,
+            "DEX": 3,
+            "WIS": 2,
+            "SOUL": 3
+        }
+    },
+    "MAGE": {
+        "stats": {
+            "STR": 3,
+            "DEX": 2,
+            "WIS": 5,
+            "SOUL": 3
+        }
+    },
+    "ROGUE": {
+        "stats": {
+            "STR": 3,
+            "DEX": 5,
+            "WIS": 3,
+            "SOUL": 2
+        }
+    },
+    "CLERIC": {
+        "stats": {
+            "STR": 2,
+            "DEX": 3,
+            "WIS": 3,
+            "SOUL": 5
+        }
+    },
+    "WARLOCK": {
+        "stats": {
+            "STR": 3,
+            "DEX": 3,
+            "WIS": 2,
+            "SOUL": 5
+        }
+    }
+}

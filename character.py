@@ -32,6 +32,8 @@ class CharacterStat:
             amount = MAX_STAT_VALUE - amount
         self.maxvalue += amount
         self.value += amount
+    def get_ratio(self) -> float:
+        return self.value / self.maxvalue
     def format_string(self) -> str:
         return "|" + "+" * self.value + "-" * (self.maxvalue - self.value) + "|" + " " * (MAX_STAT_VALUE - self.maxvalue)
 
@@ -45,4 +47,4 @@ class Character:
         return "STR " + self.strength.format_string() + " " \
             "DEX " + self.dexterity.format_string() + " " \
             "WIS " + self.wisdom.format_string() + " " \
-            "SOUL " + self.wisdom.format_string() + " "
+            "SOUL " + self.soul.format_string() + " "
