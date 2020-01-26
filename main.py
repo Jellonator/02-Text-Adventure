@@ -3,6 +3,8 @@ import sys, os, json
 # Check to make sure we are running the correct version of Python
 assert sys.version_info >= (3,7), "This script requires at least Python 3.7"
 
+import character
+
 # The game and item description files (in the same folder as this script)
 game_file = 'zork.json'
 item_file = 'items.json'
@@ -25,6 +27,10 @@ def main():
     end_game = ['END']  # Any of the end-game locations
 
     (level, items) = load_files()
+    player = character.Character()
+    print(player.format_string())
+    player.strength.subtract(2)
+    print(player.format_string())
 
 # run the main function
 if __name__ == '__main__':
