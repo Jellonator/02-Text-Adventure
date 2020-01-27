@@ -146,6 +146,8 @@ def game_loop(gamedata):
             args = userargs[1:]
             if action in gamedata.actions:
                 gamedata.actions[action].func(gamedata, args)
+            else:
+                print("Unknown action '{}'".format(action))
 
 # The main function for the game
 def main():
