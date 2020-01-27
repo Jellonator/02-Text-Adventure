@@ -6,7 +6,12 @@
             "DEX": 3,
             "WIS": 2,
             "SOUL": 3
-        }
+        },
+        "items": [
+            "SWORD",
+            "SHIELD"
+        ],
+        "spells": []
     },
     "MAGE": {
         "description": "A wise, crafty mage. These spell-casters have many tricks up their sleeve.",
@@ -15,7 +20,13 @@
             "DEX": 3,
             "WIS": 5,
             "SOUL": 3
-        }
+        },
+        "items": [
+            "STAFF"
+        ],
+        "spells": [
+            "FIRE"
+        ]
     },
     "ROGUE": {
         "description": "A cunning, stealthy rogue. These sneaky thieves tend to avoid combat.",
@@ -24,7 +35,11 @@
             "DEX": 5,
             "WIS": 3,
             "SOUL": 2
-        }
+        },
+        "items": [
+            "DAGGER",
+            "POTION"
+        ]
     },
     "CLERIC": {
         "description": "A holy cleric endowed from the heavens. Utilizes their holy connection to\nperform miracles.",
@@ -33,7 +48,13 @@
             "DEX": 2,
             "WIS": 3,
             "SOUL": 5
-        }
+        },
+        "items": [
+            "STAFF"
+        ],
+        "spells": [
+            "LIGHT"
+        ]
     },
     "WARLOCK": {
         "description": "A sorcerer who practices black magic. They wield unspeakable magic, at a cost.",
@@ -45,6 +66,12 @@
         },
         "stat_value": {
             "SOUL": 3
-        }
+        },
+        "items": [
+            "DAGGER"
+        ],
+        "spells": [
+            "DRAIN"
+        ]
     }
 }

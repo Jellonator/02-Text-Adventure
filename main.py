@@ -37,6 +37,7 @@ class GameData:
             "move": GameAction(action_move, "Move to another room")
         }
         self.explored = {}
+        self.cleared_combats = {}
 
 class GameAction:
     def __init__(self, func, helptext):
@@ -120,6 +121,8 @@ def enter_location(gamedata, location):
             print("You enter the '{}'.".format(roomdata["name"]))
         else:
             print("You enter the room.")
+        if "desc-post-combat" in roomdata and location in gamedata.cleared_combats:
+            print(roomdata["desc-post-combat"])
         if "desc" in roomdata:
             print(roomdata["desc"])
         else:

@@ -106,5 +106,35 @@
             }
         },
         "weight": 2
+    },
+    "STAFF": {
+        "durability-desc": [
+            "A broken staff.",
+            "A splintered staff.",
+            "A lightly used staff.",
+            "A sturdy, wooden staff.."
+        ],
+        "desc": "",
+        "durability": 3,
+        "attacks": {
+            "strike": {
+                "type": "attack",
+                "target": "single",
+                "stat": "STR",
+                "bonus": 2
+            }
+        },
+        "weight": 1
+    },
+    "POTION": {
+        "desc": "A healing potion.",
+        "actions": {
+            "drink": {
+                "type": "heal",
+                "stat": "CHOOSE",
+                "amount": 2
+            }
+        },
+        "weight": 1
     }
 }

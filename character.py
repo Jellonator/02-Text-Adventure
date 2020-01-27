@@ -45,11 +45,14 @@ class Character:
         self.dexterity = CharacterStat(3)
         self.wisdom = CharacterStat(3)
         self.soul = CharacterStat(3)
+        self.inventory = []
     def format_string(self):
         return "STR " + self.strength.format_string() + " " \
             "DEX " + self.dexterity.format_string() + " " \
             "WIS " + self.wisdom.format_string() + " " \
             "SOUL " + self.soul.format_string() + " "
+    def get_carrying_capacity(self):
+        return max(self.strength.value + self.dexterity.value, 4)
 
 def generate_character(classdefs):
     player = Character()
