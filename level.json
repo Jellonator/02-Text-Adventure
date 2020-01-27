@@ -3,7 +3,49 @@
         "name": "Forest entrance",
         "desc": "You are standing before the forest which surrounds the necromancer's keep.\nDespite the towering trees, the necromancer's skyscraper eclipses them all.",
         "exits": [
-            
+            {
+                "exit": "NORTH",
+                "target": "FOREST1"
+            }
+        ]
+    },
+    "FOREST1": {
+        "name": "Unassuming log",
+        "desc": "You happen upon an unassuming log in the forest.",
+        "exits": [
+            {
+                "exit": "SOUTH",
+                "target": "WHOUS"
+            },
+            {
+                "exit": "NORTH",
+                "target": "BRIDGE"
+            }
+        ]
+    },
+    "BRIDGE": {
+        "name": "Rickety bridge",
+        "desc": "You encounter a river, with only a rickety bridge to cross it.",
+        "exits": [
+            {
+                "exit": "SOUTH",
+                "target": "FOREST1"
+            },
+            {
+                "exit": "NORTH",
+                "target": "GOBLIN_CAMP"
+            }
+        ]
+    },
+    "GOBLIN_CAMP": {
+        "name": "Goblin camp",
+        "desc": "It appears some goblins have set up camp here.",
+        "desc-post-combat": "This camp used to belong to some goblins.",
+        "exits": [
+            {
+                "exit": "SOUTH",
+                "target": "BRIDGE"
+            }
         ]
     }
 }

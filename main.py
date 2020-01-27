@@ -28,6 +28,7 @@ class GameData:
         self.items = itemdata
         self.player = player
         self.room = startroom
+        self.lastroom = ""
         self.finished = False
         self.actions = {
             "help": GameAction(action_help, "You're already using this, dummy!"),
@@ -107,8 +108,12 @@ def action_move(gamedata, args):
         print("Too many arguments to 'move'.")
 
 def enter_location(gamedata, location):
+    if location == gamedata.room:
+        print("You tried to move there, but you were already there all along!\nFunny how nature do that.")
+        return
     if location in gamedata.level:
         gamedata.explored[location] = True
+        gamedata.lastroom = gamedata.room
         gamedata.room = location
         roomdata = gamedata.level[location]
         if "name" in roomdata:
@@ -122,7 +127,10 @@ def enter_location(gamedata, location):
         if "exits" in roomdata and len(roomdata["exits"]) > 0:
             exitdefs = roomdata["exits"]
             exitnum = len(exitdefs)
-            print("There are {} exits:".format(exitnum))
+            if exitnum == 1:
+                print("There is 1 exit:")
+            else:
+                print("There are {} exits:".format(exitnum))
             for i, exitdata in enumerate(exitdefs):
                 exitinfo = "???"
                 exitname = exitdata["exit"]
@@ -136,8 +144,6 @@ def enter_location(gamedata, location):
         print("Unrecognized location '{}'".format(location))
 
 def game_loop(gamedata):
-    print("Type 'help' for information.")
-    enter_location(gamedata, gamedata.room)
     while not gamedata.finished:
         userinput = input("> ").lower().strip()
         userargs = userinput.split()
@@ -151,15 +157,15 @@ def game_loop(gamedata):
 
 # The main function for the game
 def main():
-    current = 'WHOUS' # The starting location
-
     level = load_json(FILE_LEVEL)
     items = load_json(FILE_ITEMS)
     classdefs = load_json(FILE_CLASSES)
     
     player = character.generate_character(classdefs)
     print(player.format_string())
-    gamedata = GameData(level, items, player, current)
+    gamedata = GameData(level, items, player, "")
+    print("Type 'help' for information.")
+    enter_location(gamedata, "WHOUS")
     game_loop(gamedata)
 
 # run the main function
