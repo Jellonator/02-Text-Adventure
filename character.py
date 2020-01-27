@@ -8,6 +8,12 @@ class Character:
         self.wisdom = gameutil.CharacterStat(3)
         self.soul = gameutil.CharacterStat(3)
         self.inventory = []
+        self.basicattack = gameitem.GameActionAttack("punch", None, {
+            "name": "Unarmed attack",
+            "target": "single",
+            "stat": "STR",
+            "bonus": 0
+        })
     def format_string(self):
         return "STR " + self.strength.format_string() + " " \
             "DEX " + self.dexterity.format_string() + " " \
@@ -15,6 +21,12 @@ class Character:
             "SOUL " + self.soul.format_string() + " "
     def get_carrying_capacity(self):
         return max(self.strength.value + self.dexterity.value, 4)
+    def get_attacks(self):
+        ls = [self.basicattack]
+        for item in self.inventory:
+            for attack in item.attacks.values():
+                ls.append(attack)
+        return ls
 
 def generate_character(classdefs, itemdefs):
     player = Character()

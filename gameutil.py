@@ -91,3 +91,22 @@ def gen_ambush_text(encounter):
     elif num > 1:
         ls2.append("{} {}".format(num, value[1]))
     return join_list_pretty(ls2)
+
+def choose_from_list(ls, cancancel, prompt):
+    if cancancel:
+        prompt = prompt + " [or 'cancel' to cancel]"
+    prompt = prompt + ": "
+    for i, enemy in enumerate(ls):
+        print("{}. {}".format(i + 1, enemy.name))
+    index = -1
+    while not index in range(len(ls)):
+        try:
+            ivalue = input(prompt).lower().strip()
+            if ivalue == "cancel" and cancancel:
+                return None
+            index = int(ivalue) - 1
+            if index not in range(len(ls)):
+                print("Input is not valid.")
+        except ValueError:
+            print("Input is not valid.")
+    return ls[index]

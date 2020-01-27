@@ -40,7 +40,8 @@ class GameData:
             "stat": GameAction(action_stat, "Gives information on your current stats."),
             "quit": GameAction(action_quit, "Quit the game."),
             "move": GameAction(action_move, "Move to another room."),
-            "inventory": GameAction(action_inventory, "List inventory items.")
+            "inventory": GameAction(action_inventory, "List inventory items."),
+            "attack": GameAction(action_attack, "Attack an enemy")
         }
         self.explored = {}
         self.cleared_combats = {}
@@ -132,6 +133,17 @@ def action_inventory(gamedata, args):
                 print("\t{}".format(item.name))
     else:
         print("Too many arguments to 'inventory'")
+
+def action_attack(gamedata, args):
+    print(gamedata.player.get_attacks())
+    # if len(args) == 0:
+    #     # choose attack
+    #     pass
+    # elif len(args) == 1:
+    #     # do attack
+    #     pass
+    # else:
+    #     print("Too many arguments to 'attack'")
 
 def enter_location(gamedata, location):
     if location == gamedata.room:

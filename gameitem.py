@@ -1,25 +1,29 @@
+import gameutil
+
 def choose_enemy(gamedata):
-    for i, enemy in enumerate(gamedata.enemies):
-        print("{}. {}".format(i + 1, enemy.name))
-    index = -1
-    while not index in range(len(gamedata.enemies)):
-        try:
-            ivalue = input("Choose an enemy to attack [or 'cancel' to cancel]: ").lower().strip()
-            if ivalue == "cancel":
-                return None
-            index = int(ivalue) - 1
-            if index not in range(len(gamedata.enemies)):
-                print("Enemy index is not in range.")
-        except ValueError:
-            print("Invalid integer.")
-    return gamedata.enemies[index]
+    return gameutil.choose_from_list(gamedata.enemies, True, "Choose an enemy to attack")
+    # for i, enemy in enumerate(gamedata.enemies):
+    #     print("{}. {}".format(i + 1, enemy.name))
+    # index = -1
+    # while not index in range(len(gamedata.enemies)):
+    #     try:
+    #         ivalue = input("Choose an enemy to attack [or 'cancel' to cancel]: ").lower().strip()
+    #         if ivalue == "cancel":
+    #             return None
+    #         index = int(ivalue) - 1
+    #         if index not in range(len(gamedata.enemies)):
+    #             print("Enemy index is not in range.")
+    #     except ValueError:
+    #         print("Invalid integer.")
+    # return gamedata.enemies[index]
 
 class GameActionAttack:
-    def __init__(self, attackname, attackdef):
+    def __init__(self, attackname, parentitem, attackdef):
         self.name = attackdef.get("name", attackname)
         self.target = attackdef.get("target", "single")
         self.stat = attackdef.get("stat", "NONE")
         self.bonus = attackdef.get("bonus", 0)
+        self.parentitem = parentitem
     def format_info(self):
         if self.stat == "NONE":
             return "+" + str(self.bonus)
@@ -49,6 +53,6 @@ class GameItem:
             for attackname, attackdef in itemdef["attacks"].items():
                 # print(attackname, attackdef)
                 if attackdef.get("type") == "attack":
-                    self.attacks[attackname] = GameActionAttack(attackname, attackdef)
+                    self.attacks[attackname] = GameActionAttack(attackname, self, attackdef)
                 else:
                     print("Unrecognized attack type '{}'".format(attackdef.get("type")))
