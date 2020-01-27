@@ -34,10 +34,12 @@ class GameData:
             "help": GameAction(action_help, "You're already using this, dummy!"),
             "stat": GameAction(action_stat, "Gives information on your current stats."),
             "quit": GameAction(action_quit, "Quit the game."),
-            "move": GameAction(action_move, "Move to another room")
+            "move": GameAction(action_move, "Move to another room."),
+            "inventory": GameAction(action_inventory, "List inventory items.")
         }
         self.explored = {}
         self.cleared_combats = {}
+        self.enemies = []
 
 class GameAction:
     def __init__(self, func, helptext):
@@ -92,6 +94,9 @@ def action_move(gamedata, args):
     if len(args) == 0:
         print("Need at least one argument to 'move'.")
     elif len(args) == 1:
+        if len(gamedata.enemies) > 0:
+            print("You're engaged in combat, unable to move!")
+            return
         name = args[0]
         exitdata = gamedata.level[gamedata.room]["exits"]
         try:
@@ -107,6 +112,21 @@ def action_move(gamedata, args):
         print("Invalid exit '{}'".format(name))
     else:
         print("Too many arguments to 'move'.")
+
+def action_inventory(gamedata, args):
+    if len(args) == 0:
+        numitems = len(gamedata.player.inventory)
+        if numitems == 0:
+            print("You don't have anything in your inventory.")
+        else:
+            if numitems == 1:
+                print("You have 1 item in your inventory:")
+            else:
+                print("Yuo have {} items in your inventory:".format(numitems))
+            for item in gamedata.player.inventory:
+                print("\t{}".format(item.name))
+    else:
+        print("Too many arguments to 'inventory'")
 
 def enter_location(gamedata, location):
     if location == gamedata.room:
@@ -164,7 +184,7 @@ def main():
     items = load_json(FILE_ITEMS)
     classdefs = load_json(FILE_CLASSES)
     
-    player = character.generate_character(classdefs)
+    player = character.generate_character(classdefs, items)
     print(player.format_string())
     gamedata = GameData(level, items, player, "")
     print("Type 'help' for information.")

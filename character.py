@@ -1,3 +1,5 @@
+import gameitem
+
 MAX_STAT_VALUE = 10
 
 class CharacterStat:
@@ -54,7 +56,7 @@ class Character:
     def get_carrying_capacity(self):
         return max(self.strength.value + self.dexterity.value, 4)
 
-def generate_character(classdefs):
+def generate_character(classdefs, itemdefs):
     player = Character()
     classlist = [name for name in classdefs]
     classlist.sort()
@@ -91,4 +93,7 @@ def generate_character(classdefs):
             player.wisdom.setvalue(class_values["WIS"])
         if "SOUL" in class_values:
             player.soul.setvalue(class_values["SOUL"])
+    if "items" in chosen_class_data:
+        for item in chosen_class_data["items"]:
+            player.inventory.append(gameitem.GameItem(item, itemdefs[item]))
     return player
