@@ -39,6 +39,27 @@ class CharacterStat:
     def format_string(self):
         return "|" + "+" * self.value + "." * (self.maxvalue - self.value) + "|" + " " * (MAX_STAT_VALUE - self.maxvalue)
 
+class EnemyHealth:
+    def __init__(self, maxvalue):
+        if maxvalue < 1:
+            maxvalue = 1
+        self.maxvalue = maxvalue
+        self.value = maxvalue
+    def setvalue(self, newvalue):
+        self.value = newvalue
+        if self.value > self.maxvalue:
+            self.value = self.maxvalue
+        if self.value < 0:
+            self.value = 0
+    def add(self, amount):
+        self.setvalue(self.value + amount)
+    def subtract(self, amount):
+        self.setvalue(self.value - amount)
+    def is_empty(self):
+        return self.value == 0
+    def get_ratio(self):
+        return self.value / self.maxvalue
+
 def join_list_pretty(ls):
     if len(ls) == 0:
         return ""
