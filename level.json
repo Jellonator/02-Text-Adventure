@@ -21,6 +21,9 @@
                 "exit": "NORTH",
                 "target": "BRIDGE"
             }
+        ],
+        "encounter": [
+            "SPIDER"
         ]
     },
     "BRIDGE": {
