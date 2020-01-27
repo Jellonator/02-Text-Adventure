@@ -1,6 +1,7 @@
 {
     "WARRIOR": {
-        "stats": {
+        "description": "A strong, brutish warrior. Prefers to settle fights with their impeccable strength.",
+        "stat_max": {
             "STR": 5,
             "DEX": 3,
             "WIS": 2,
@@ -8,15 +9,17 @@
         }
     },
     "MAGE": {
-        "stats": {
-            "STR": 3,
-            "DEX": 2,
+        "description": "A wise, crafty mage. These spell-casters have many tricks up their sleeve.",
+        "stat_max": {
+            "STR": 2,
+            "DEX": 3,
             "WIS": 5,
             "SOUL": 3
         }
     },
     "ROGUE": {
-        "stats": {
+        "description": "A cunning, stealthy rogue. These sneaky thieves tend to avoid combat.",
+        "stat_max": {
             "STR": 3,
             "DEX": 5,
             "WIS": 3,
@@ -24,19 +27,24 @@
         }
     },
     "CLERIC": {
-        "stats": {
-            "STR": 2,
-            "DEX": 3,
+        "description": "A holy cleric endowed from the heavens. Utilizes their holy connection to perform miracles.",
+        "stat_max": {
+            "STR": 3,
+            "DEX": 2,
             "WIS": 3,
             "SOUL": 5
         }
     },
     "WARLOCK": {
-        "stats": {
+        "description": "A sorcerer who practices black magic. They wield unspeakable magic, at a cost.",
+        "stat_max": {
             "STR": 3,
             "DEX": 3,
             "WIS": 2,
             "SOUL": 5
+        },
+        "stat_value": {
+            "SOUL": 3
         }
     }
 }
