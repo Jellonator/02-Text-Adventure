@@ -64,7 +64,7 @@ def generate_character(classdefs):
             index = int(input("What is your class? [1-{}]: ".format(numclasses))) - 1
             if not index in range(numclasses):
                 print("Input is not a valid index.")
-        except TypeError:
+        except ValueError:
             print("Input is not a valid integer.")
     chosen_class_name = classlist[index]
     chosen_class_data = classdefs[chosen_class_name]

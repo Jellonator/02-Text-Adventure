@@ -32,8 +32,10 @@ class GameData:
         self.actions = {
             "help": GameAction(action_help, "You're already using this, dummy!"),
             "stat": GameAction(action_stat, "Gives information on your current stats."),
-            "quit": GameAction(action_quit, "Quit the game.")
+            "quit": GameAction(action_quit, "Quit the game."),
+            "move": GameAction(action_move, "Move to another room")
         }
+        self.explored = {}
 
 class GameAction:
     def __init__(self, func, helptext):
@@ -84,8 +86,58 @@ def action_quit(gamedata, args):
     else:
         print("Too many arguments to 'help'.")
 
+def action_move(gamedata, args):
+    if len(args) == 0:
+        print("Need at least one argument to 'move'.")
+    elif len(args) == 1:
+        name = args[0]
+        exitdata = gamedata.level[gamedata.room]["exits"]
+        try:
+            index = int(name) - 1
+            if index in range(len(exitdata)):
+                enter_location(gamedata, exitdata[index]["target"])
+                return
+        except ValueError:
+            for data in exitdata:
+                if data["exit"].lower() == name:
+                    enter_location(gamedata, data["target"])
+                    return
+        print("Invalid exit '{}'".format(name))
+    else:
+        print("Too many arguments to 'move'.")
+
+def enter_location(gamedata, location):
+    if location in gamedata.level:
+        gamedata.explored[location] = True
+        gamedata.room = location
+        roomdata = gamedata.level[location]
+        if "name" in roomdata:
+            print("You enter the '{}'.".format(roomdata["name"]))
+        else:
+            print("You enter the room.")
+        if "desc" in roomdata:
+            print(roomdata["desc"])
+        else:
+            print("There is nothing noteworthy about this room.")
+        if "exits" in roomdata or len(roomdata["exits"]) == 0:
+            exitdefs = roomdata["exits"]
+            exitnum = len(exitdefs)
+            print("There are {} exits:".format(exitnum))
+            for i, exitdata in enumerate(exitdefs):
+                exitinfo = "???"
+                exitname = exitdata["exit"]
+                exittarget = exitdata["target"]
+                if exittarget in gamedata.explored and exittarget in gamedata.level:
+                    exitinfo = gamedata.level[exittarget]["name"]
+                print("    {}. {}:\t{}".format(i, exitname, exitinfo))
+        else:
+            print("There appears to be nowhere to go. That's unfortunate. Game over I guess?")
+    else:
+        print("Unrecognized location '{}'".format(location))
+
 def game_loop(gamedata):
     print("Type 'help' for information.")
+    enter_location(gamedata, gamedata.room)
     while not gamedata.finished:
         userinput = input("> ").lower().strip()
         userargs = userinput.split()

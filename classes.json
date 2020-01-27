@@ -1,6 +1,6 @@
 {
     "WARRIOR": {
-        "description": "A strong, brutish warrior. Prefers to settle fights with their impeccable strength.",
+        "description": "A strong, brutish warrior. Prefers to settle fights with their impeccable\nstrength.",
         "stat_max": {
             "STR": 5,
             "DEX": 3,
@@ -27,7 +27,7 @@
         }
     },
     "CLERIC": {
-        "description": "A holy cleric endowed from the heavens. Utilizes their holy connection to perform miracles.",
+        "description": "A holy cleric endowed from the heavens. Utilizes their holy connection to\nperform miracles.",
         "stat_max": {
             "STR": 3,
             "DEX": 2,
