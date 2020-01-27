@@ -1,0 +1,9 @@
+{
+    "WHOUS": {
+        "name": "Forest entrance",
+        "desc": "You are standing before the forest which surrounds the necromancer's keep.\nDespite the towering trees, the necromancer's skyscraper eclipses them all.",
+        "exits": [
+            
+        ]
+    }
+}

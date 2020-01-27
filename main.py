@@ -7,7 +7,7 @@ import character
 import json
 
 # The game and item description files (in the same folder as this script)
-FILE_LEVEL = 'zork.json'
+FILE_LEVEL = 'level.json'
 FILE_ITEMS = 'items.json'
 FILE_CLASSES = "classes.json"
 
@@ -119,7 +119,7 @@ def enter_location(gamedata, location):
             print(roomdata["desc"])
         else:
             print("There is nothing noteworthy about this room.")
-        if "exits" in roomdata or len(roomdata["exits"]) == 0:
+        if "exits" in roomdata and len(roomdata["exits"]) > 0:
             exitdefs = roomdata["exits"]
             exitnum = len(exitdefs)
             print("There are {} exits:".format(exitnum))

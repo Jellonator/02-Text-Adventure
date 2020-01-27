@@ -1,16 +1,110 @@
 {
     "PAMPHLET": {
-       "exits": {},
-       "actions": {
-          "read": "The pamphlet says, Welcome to Zork!"
-       },
-       "points": 1
+        "desc": "A weird pamphlet. Probably shouldn't exist in this game. Maybe recycle it?",
+        "actions": {},
+        "weight": 0
     },
     "SWORD": {
-       "exits": {
-          "CELLA": "The sword glows with a faint blue glow!"
-       },
-       "actions": {},
-       "points": 10
+        "durability-desc": [
+            "A broken longsword.",
+            "This steel longsword has several large chips along its edge.",
+            "This steel longsword has seen better days.",
+            "A sturdy, steel longsword."
+        ],
+        "desc": "Swords; you know'em, you love'em. A great weapon for all situations.",
+        "durability": 3,
+        "attacks": {
+            "strike": {
+                "type": "attack",
+                "target": "single",
+                "stat": "STR",
+                "bonus": 3
+            }
+        },
+        "weight": 2
+    },
+    "DAGGER": {
+        "durability-desc": [
+            "A broken dagger.",
+            "A small, dulled dagger.",
+            "A small, bloody dagger.",
+            "A small, shiny dagger."
+        ],
+        "desc": "Daggers like these are perfect for stabbing enemies and chopping onions.",
+        "durability": 3,
+        "attacks": {
+            "strike": {
+                "type": "attack",
+                "target": "single",
+                "stat": "DEX",
+                "bonus": 2
+            }
+        },
+        "weight": 1
+    },
+    "SHIELD": {
+        "durability-desc": [
+            "A broken steel shield.",
+            "A dented steel shield.",
+            "A scratched steel shield.",
+            "A sturdy, steel shield."
+        ],
+        "desc": "Great for defense, not so much for offense.",
+        "durability": 3,
+        "attacks": {
+            "bash": {
+                "type": "attack",
+                "target": "single",
+                "stat": "STR",
+                "bonus": 1
+            }
+        },
+        "reactions": {
+            "physical": {
+                "type": "block",
+                "stat": "DEX",
+                "bonus": 2
+            }
+        },
+        "weight": 2
+    },
+    "WARHAMMER": {
+        "durability-desc": [
+            "A broken warhammer.",
+            "This warhamer is slightly dented along its neck.",
+            "A strong, scratched warhammer.",
+            "A strong, heavy warhammer.",
+            "A strong, sturdy warhammer."
+        ],
+        "desc": "Now you just need 39,999 more.",
+        "durability": 4,
+        "attacks": {
+            "strike": {
+                "type": "attack",
+                "target": "single",
+                "stat": "STR",
+                "bonus": 2
+            }
+        },
+        "weight": 2
+    },
+    "HANDGUN": {
+        "durability-desc": [
+            "A broken handgun.",
+            "This handgun is dented along its barrel.",
+            "A scratched handgun.",
+            "A handgun."
+        ],
+        "desc": "Although the necromancer's magic has rendered this weapon powerless,\nit can still function as a nice, heavy club.",
+        "durability": 3,
+        "attacks": {
+            "strike": {
+                "type": "attack",
+                "target": "single",
+                "stat": "STR",
+                "bonus": 2
+            }
+        },
+        "weight": 2
     }
- }
+}
