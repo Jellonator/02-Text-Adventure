@@ -1,3 +1,19 @@
+def choose_enemy(gamedata):
+    for i, enemy in enumerate(gamedata.enemies):
+        print("{}. {}".format(i + 1, enemy.name))
+    index = -1
+    while not index in range(len(gamedata.enemies)):
+        try:
+            ivalue = input("Choose an enemy to attack [or 'cancel' to cancel]: ").lower().strip()
+            if ivalue == "cancel":
+                return None
+            index = int(ivalue) - 1
+            if index not in range(len(gamedata.enemies)):
+                print("Enemy index is not in range.")
+        except ValueError:
+            print("Invalid integer.")
+    return gamedata.enemies[index]
+
 class GameActionAttack:
     def __init__(self, attackname, attackdef):
         self.name = attackdef.get("name", attackname)
@@ -5,8 +21,21 @@ class GameActionAttack:
         self.stat = attackdef.get("stat", "NONE")
         self.bonus = attackdef.get("bonus", 0)
     def format_info(self):
-        return "[]"
-
+        if self.stat == "NONE":
+            return "+" + str(self.bonus)
+        elif self.bonus == 0:
+            return self.stat
+        else:
+            return self.stat + "+" + str(self.bonus)
+    def use(self, gamedata, shared):
+        target = shared.get("target")
+        if target == None:
+            target = choose_enemy(gamedata)
+            if target == None:
+                return False
+            shared["target"] = target
+        print("Attacking {}".format(target.name))
+        return True
 class GameItem:
     def __init__(self, itemname, itemdef):
         self.name = itemdef.get("name", itemname)

@@ -1,52 +1,12 @@
 import gameitem
-
-MAX_STAT_VALUE = 10
-
-class CharacterStat:
-    def __init__(self, maxvalue):
-        if maxvalue < 1:
-            maxvalue = 1
-        if maxvalue > MAX_STAT_VALUE:
-            maxvalue = MAX_STAT_VALUE
-        self.maxvalue = maxvalue
-        self.value = maxvalue
-    def reset(self, maxvalue):
-        if maxvalue < 1:
-            maxvalue = 1
-        if maxvalue > MAX_STAT_VALUE:
-            maxvalue = MAX_STAT_VALUE
-        self.maxvalue = maxvalue
-        self.value = maxvalue
-    def setvalue(self, newvalue):
-        self.value = newvalue
-        if self.value > self.maxvalue:
-            self.value = self.maxvalue
-        if self.value < 0:
-            self.value = 0
-    def add(self, amount):
-        self.setvalue(self.value + amount)
-    def subtract(self, amount):
-        self.setvalue(self.value - amount)
-    def is_empty(self):
-        return self.value == 0
-    def upgrade(self, amount):
-        if self.maxvalue + amount < 1:
-            amount = 1 - self.maxvalue
-        if self.maxvalue + amount > MAX_STAT_VALUE:
-            amount = MAX_STAT_VALUE - amount
-        self.maxvalue += amount
-        self.value += amount
-    def get_ratio(self):
-        return self.value / self.maxvalue
-    def format_string(self):
-        return "|" + "+" * self.value + "." * (self.maxvalue - self.value) + "|" + " " * (MAX_STAT_VALUE - self.maxvalue)
+import gameutil
 
 class Character:
     def __init__(self):
-        self.strength = CharacterStat(3)
-        self.dexterity = CharacterStat(3)
-        self.wisdom = CharacterStat(3)
-        self.soul = CharacterStat(3)
+        self.strength = gameutil.CharacterStat(3)
+        self.dexterity = gameutil.CharacterStat(3)
+        self.wisdom = gameutil.CharacterStat(3)
+        self.soul = gameutil.CharacterStat(3)
         self.inventory = []
     def format_string(self):
         return "STR " + self.strength.format_string() + " " \
@@ -66,7 +26,7 @@ def generate_character(classdefs, itemdefs):
     numclasses = len(classlist)
     while not index in range(numclasses):
         try:
-            index = int(input("What is your class? [1-{}]: ".format(numclasses))) - 1
+            index = int(input("What is your class? [1-{}]: ".format(numclasses)).lower().strip()) - 1
             if not index in range(numclasses):
                 print("Input is not a valid index.")
         except ValueError:

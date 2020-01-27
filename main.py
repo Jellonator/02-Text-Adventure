@@ -5,11 +5,15 @@ assert sys.version_info >= (3,7), "This script requires at least Python 3.7"
 
 import character
 import json
+import gameutil
+import gameenemy
+import gameitem
 
 # The game and item description files (in the same folder as this script)
 FILE_LEVEL = 'level.json'
 FILE_ITEMS = 'items.json'
 FILE_CLASSES = "classes.json"
+FILE_ENEMIES = "enemies.json"
 
 # Load the contents of the files into the game and items dictionaries. You can largely ignore this
 # Sorry it's messy, I'm trying to account for any potential craziness with the file location
@@ -23,11 +27,12 @@ def load_json(name: str):
         os._exit(1)
 
 class GameData:
-    def __init__(self, leveldata, itemdata, player, startroom):
+    def __init__(self, leveldata, itemdata, player, enemydefs):
         self.level = leveldata
         self.items = itemdata
         self.player = player
-        self.room = startroom
+        self.enemydefs = enemydefs
+        self.room = ""
         self.lastroom = ""
         self.finished = False
         self.actions = {
@@ -39,7 +44,7 @@ class GameData:
         }
         self.explored = {}
         self.cleared_combats = {}
-        self.enemies = []
+        self.encounter = []
 
 class GameAction:
     def __init__(self, func, helptext):
@@ -80,7 +85,7 @@ def action_stat(gamedata, args):
             print("If you run out, you succumb to the darkness and your soul is lost forever.")
             print("SOUL:", gamedata.player.soul.format_string())
         else:
-            print("Unknown stat name.")
+            print("Unknown stat '{}'".format(name))
     else:
         print("Too many arguments to 'stat'.")
 
@@ -94,7 +99,7 @@ def action_move(gamedata, args):
     if len(args) == 0:
         print("Need at least one argument to 'move'.")
     elif len(args) == 1:
-        if len(gamedata.enemies) > 0:
+        if len(gamedata.encounter) > 0:
             print("You're engaged in combat, unable to move!")
             return
         name = args[0]
@@ -163,6 +168,15 @@ def enter_location(gamedata, location):
                 print("    {}. {}:\t{}".format(i, exitname, exitinfo))
         else:
             print("There appears to be nowhere to go. That's unfortunate. Game over I guess?")
+        if "encounter" in roomdata and location not in gamedata.cleared_combats:
+            for enemyname in roomdata["encounter"]:
+                if enemyname in gamedata.enemydefs:
+                    enemy = gameenemy.GameEnemy(enemyname, gamedata.enemydefs[enemyname])
+                    gamedata.encounter.append(enemy)
+                else:
+                    print("Unknown enemy '{}'".format(enemyname))
+            if len(gamedata.encounter) > 0:
+                print("You were ambushed by {}!".format(gameutil.gen_ambush_text(gamedata.encounter)))
     else:
         print("Unrecognized location '{}'".format(location))
 
@@ -183,10 +197,11 @@ def main():
     level = load_json(FILE_LEVEL)
     items = load_json(FILE_ITEMS)
     classdefs = load_json(FILE_CLASSES)
+    enemydefs = load_json(FILE_ENEMIES)
     
     player = character.generate_character(classdefs, items)
     print(player.format_string())
-    gamedata = GameData(level, items, player, "")
+    gamedata = GameData(level, items, player, enemydefs)
     print("Type 'help' for information.")
     enter_location(gamedata, "WHOUS")
     game_loop(gamedata)

@@ -1,6 +1,7 @@
 {
     "SPIDER": {
         "name": "Massive Spider",
+        "plural": "Massive Spiders",
         "health": 3,
         "actions": {
             "web": {
