@@ -27,6 +27,26 @@ class Character:
             for attack in item.attacks.values():
                 ls.append(attack)
         return ls
+    def get_stat(self, name, cancancelchoose=False):
+        if name == "str":
+            return self.strength
+        elif name == "dex":
+            return self.dexterity
+        elif name == "wis":
+            return self.wisdom
+        elif name == "soul":
+            return self.soul
+        elif name == "none":
+            return None
+        elif name == "choose":
+            stats = ["STR", "DEX", "WIS", "SOUL"]
+            value = gameutil.choose_from_list(stats)
+            if value == None:
+                return None
+            return self.get_stat(value.lower(), cancancelchoose)
+        else:
+            print("Unknown stat name '{}'".format(name))
+            return None
 
 def generate_character(classdefs, itemdefs):
     player = Character()

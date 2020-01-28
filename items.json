@@ -5,6 +5,7 @@
         "weight": 0
     },
     "SWORD": {
+        "name": "Broadsword",
         "durability-desc": [
             "A broken longsword.",
             "This steel longsword has several large chips along its edge.",
@@ -18,12 +19,13 @@
                 "type": "attack",
                 "target": "single",
                 "stat": "STR",
-                "bonus": 3
+                "bonus": 2
             }
         },
         "weight": 2
     },
     "DAGGER": {
+        "name": "Dagger",
         "durability-desc": [
             "A broken dagger.",
             "A small, dulled dagger.",
@@ -37,12 +39,13 @@
                 "type": "attack",
                 "target": "single",
                 "stat": "DEX",
-                "bonus": 2
+                "bonus": 1
             }
         },
         "weight": 1
     },
     "SHIELD": {
+        "name": "Shield",
         "durability-desc": [
             "A broken steel shield.",
             "A dented steel shield.",
@@ -69,15 +72,15 @@
         "weight": 2
     },
     "WARHAMMER": {
+        "name": "Warhammer",
         "durability-desc": [
             "A broken warhammer.",
             "This warhamer is slightly dented along its neck.",
             "A strong, scratched warhammer.",
-            "A strong, heavy warhammer.",
             "A strong, sturdy warhammer."
         ],
         "desc": "Now you just need 39,999 more.",
-        "durability": 4,
+        "durability": 3,
         "attacks": {
             "strike": {
                 "type": "attack",
@@ -89,6 +92,7 @@
         "weight": 2
     },
     "HANDGUN": {
+        "name": "Handgun",
         "durability-desc": [
             "A broken handgun.",
             "This handgun is dented along its barrel.",
@@ -102,12 +106,13 @@
                 "type": "attack",
                 "target": "single",
                 "stat": "STR",
-                "bonus": 2
+                "bonus": 1
             }
         },
         "weight": 2
     },
     "STAFF": {
+        "name": "Staff",
         "durability-desc": [
             "A broken staff.",
             "A splintered staff.",
@@ -121,12 +126,13 @@
                 "type": "attack",
                 "target": "single",
                 "stat": "STR",
-                "bonus": 2
+                "bonus": 1
             }
         },
         "weight": 1
     },
     "POTION": {
+        "name": "Healing Potion",
         "desc": "A healing potion.",
         "actions": {
             "drink": {

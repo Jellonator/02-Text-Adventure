@@ -199,6 +199,22 @@ def render(gamedata):
             print("Enter 'move location' to move to another location")
         else:
             print("There doesn't appear to be anywhere to go...")
+    else:
+        print("Type 'attack' to attack an enemy")
+
+def update(gamedata):
+    i = 0
+    prevlen = len(gamedata.encounter)
+    while i < len(gamedata.encounter):
+        enemy = gamedata.encounter[i]
+        if enemy.is_dead():
+            gamedata.encounter.pop(i)
+            print("You killed the {}!".format(enemy.name))
+        else:
+            i += 1
+    if len(gamedata.encounter) == 0 and prevlen > 0:
+        print("You defeated all of the enemies!")
+        input("Press enter to continue...")
 
 def game_loop(gamedata):
     while not gamedata.finished:
@@ -212,6 +228,7 @@ def game_loop(gamedata):
                 gamedata.actions[action].func(gamedata, args)
             else:
                 print("Unknown action '{}'".format(action))
+        update(gamedata)
 
 # The main function for the game
 def main():

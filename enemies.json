@@ -2,12 +2,14 @@
     "SPIDER": {
         "name": "Massive Spider",
         "plural": "Massive Spiders",
-        "health": 3,
+        "health": 2,
+        "defense": 2,
         "actions": {
             "web": {
                 "type": "attack",
                 "stat": "DEX",
                 "damage": 1,
+                "roll": 3,
                 "desc": "The spider shoots a web at you.",
                 "desc-hit": "The spider's web tangles around you.",
                 "desc-miss": "The web misses."
@@ -16,6 +18,7 @@
                 "type": "attack",
                 "stat": "STR",
                 "damage": 1,
+                "roll": 3,
                 "desc": "The spider attempts to bite you.",
                 "desc-hit": "The spider misses.",
                 "desc-miss": "The spider sinks its fangs into your arm."
@@ -24,6 +27,7 @@
                 "type": "attack",
                 "stat": "WIS",
                 "damage": 1,
+                "roll": 2,
                 "desc": "The spider hisses at you.",
                 "desc-hit": "You are unaffected by the spider's taunts.",
                 "desc-miss": "You feel a chill go down your spine."

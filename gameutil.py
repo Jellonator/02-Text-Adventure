@@ -1,3 +1,5 @@
+import random
+
 MAX_STAT_VALUE = 10
 
 class CharacterStat:
@@ -110,3 +112,6 @@ def choose_from_list(ls, cancancel, prompt):
         except ValueError:
             print("Input is not valid.")
     return ls[index]
+
+def roll_dice(num, sides):
+    return [random.randint(1, sides) for _ in range(num)]
