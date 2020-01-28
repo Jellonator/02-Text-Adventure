@@ -3,6 +3,7 @@
         "name": "Massive Spider",
         "plural": "Massive Spiders",
         "health": 3,
+        "defense": 3,
         "actions": {
             "web": {
                 "type": "attack",
