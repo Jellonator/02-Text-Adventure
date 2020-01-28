@@ -22,7 +22,8 @@
         },
         "items": [
             "STAFF",
-            "SPELL_FIRE"
+            "SPELL_FIRE",
+            "SPELL_PROTECT"
         ]
     },
     "ROGUE": {
@@ -35,11 +36,12 @@
         },
         "items": [
             "DAGGER",
+            "POTION",
             "POTION"
         ]
     },
     "CLERIC": {
-        "description": "A holy cleric endowed from the heavens. Utilizes their holy connection to\nperform miracles.",
+        "description": "A cleric with holy powers. Utilizes their holy connection to perform miracles.",
         "stat_max": {
             "STR": 3,
             "DEX": 2,
@@ -48,7 +50,8 @@
         },
         "items": [
             "STAFF",
-            "SPELL_LIGHT"
+            "SPELL_LIGHT",
+            "SPELL_PROTECT"
         ]
     },
     "WARLOCK": {
@@ -64,7 +67,8 @@
         },
         "items": [
             "DAGGER",
-            "SPELL_DRAIN"
+            "SPELL_ZAP",
+            "SPELL_CURSE"
         ]
     }
 }

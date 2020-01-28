@@ -128,7 +128,7 @@ def action_inventory(gamedata, args):
             if numitems == 1:
                 print("You have 1 item in your inventory:")
             else:
-                print("Yuo have {} items in your inventory:".format(numitems))
+                print("You have {} items in your inventory:".format(numitems))
             for item in gamedata.player.inventory:
                 print("\t{}".format(item.name))
     else:

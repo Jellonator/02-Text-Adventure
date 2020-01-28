@@ -19,7 +19,8 @@
                 "type": "attack",
                 "target": "single",
                 "stat": "STR",
-                "bonus": 2
+                "bonus": 2,
+                "damage": 3
             }
         },
         "weight": 2
@@ -39,7 +40,8 @@
                 "type": "attack",
                 "target": "single",
                 "stat": "DEX",
-                "bonus": 1
+                "bonus": 2,
+                "damage": 2
             }
         },
         "weight": 1
@@ -59,14 +61,16 @@
                 "type": "attack",
                 "target": "single",
                 "stat": "STR",
-                "bonus": 1
+                "bonus": 1,
+                "damage": 2
             }
         },
         "reactions": {
-            "physical": {
+            "block": {
                 "type": "block",
                 "stat": "DEX",
-                "bonus": 2
+                "bonus": 2,
+                "resist": "physical"
             }
         },
         "weight": 2
@@ -86,7 +90,8 @@
                 "type": "attack",
                 "target": "single",
                 "stat": "STR",
-                "bonus": 2
+                "bonus": 1,
+                "damage": 4
             }
         },
         "weight": 2
@@ -106,7 +111,8 @@
                 "type": "attack",
                 "target": "single",
                 "stat": "STR",
-                "bonus": 1
+                "bonus": 1,
+                "damage": 2
             }
         },
         "weight": 2
@@ -126,7 +132,8 @@
                 "type": "attack",
                 "target": "single",
                 "stat": "STR",
-                "bonus": 1
+                "bonus": 2,
+                "damage": 2
             }
         },
         "weight": 1
@@ -142,5 +149,84 @@
             }
         },
         "weight": 1
+    },
+    "SPELL_FIRE": {
+        "name": "Fire Spell",
+        "desc": "A spell that deals 3 fire damage.",
+        "attacks": {
+            "cast": {
+                "type": "attack",
+                "target": "single",
+                "stat": "WIS",
+                "bonus": 2,
+                "damage": 3
+            }
+        }
+    },
+    "SPELL_THUNDER": {
+        "name": "Thunder Spell",
+        "desc": "A spell that deals 2 thunder damage to all enemies.",
+        "attacks": {
+            "cast": {
+                "type": "attack",
+                "target": "all",
+                "stat": "WIS",
+                "bonus": 0,
+                "damage": 2
+            }
+        }
+    },
+    "SPELL_LIGHT": {
+        "name": "Smiting spell",
+        "desc": "A spell that deals 3 smiting damage.",
+        "attacks": {
+            "cast": {
+                "type": "attack",
+                "target": "single",
+                "stat": "SOUL",
+                "bonus": 1,
+                "damage": 3
+            }
+        }
+    },
+    "SPELL_PROTECT": {
+        "name": "Protection spell",
+        "desc": "A spell for protection.",
+        "reactions": {
+            "cast": {
+                "type": "block",
+                "stat": "WIS",
+                "resist": "all",
+                "bonus": 2
+            }
+        }
+    },
+    "SPELL_ZAP": {
+        "name": "Dark zap spell",
+        "desc": "A spell that deals 5 necrotic damage.",
+        "attacks": {
+            "cast": {
+                "type": "attack",
+                "target": "single",
+                "stat": "SOUL",
+                "stat-negate": true,
+                "bonus": 0,
+                "damage": 5
+            }
+        }
+    },
+    "SPELL_CURSE": {
+        "name": "Curse spell",
+        "desc": "Curses an enemy. Their next two attacks lose one attack die.",
+        "attacks": {
+            "cast": {
+                "type": "curse",
+                "target": "single",
+                "stat": "SOUL",
+                "stat-negate": true,
+                "bonus": 3,
+                "amount": 2
+            }
+        }
     }
 }

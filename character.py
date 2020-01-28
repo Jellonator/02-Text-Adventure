@@ -27,7 +27,7 @@ class Character:
             for attack in item.attacks.values():
                 ls.append(attack)
         return ls
-    def get_stat(self, name, cancancelchoose=False):
+    def get_stat(self, name, cancancelchoose=False, chooseprompt="Choose a stat to use"):
         if name == "str":
             return self.strength
         elif name == "dex":
@@ -40,7 +40,7 @@ class Character:
             return None
         elif name == "choose":
             stats = ["STR", "DEX", "WIS", "SOUL"]
-            value = gameutil.choose_from_list(stats)
+            value = gameutil.choose_from_list(stats, cancancelchoose, chooseprompt)
             if value == None:
                 return None
             return self.get_stat(value.lower(), cancancelchoose)

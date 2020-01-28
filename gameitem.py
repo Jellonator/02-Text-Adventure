@@ -2,35 +2,26 @@ import gameutil
 
 def choose_enemy(gamedata):
     return gameutil.choose_from_list(gamedata.encounter, True, "Choose an enemy to attack")
-    # for i, enemy in enumerate(gamedata.enemies):
-    #     print("{}. {}".format(i + 1, enemy.name))
-    # index = -1
-    # while not index in range(len(gamedata.enemies)):
-    #     try:
-    #         ivalue = input("Choose an enemy to attack [or 'cancel' to cancel]: ").lower().strip()
-    #         if ivalue == "cancel":
-    #             return None
-    #         index = int(ivalue) - 1
-    #         if index not in range(len(gamedata.enemies)):
-    #             print("Enemy index is not in range.")
-    #     except ValueError:
-    #         print("Invalid integer.")
-    # return gamedata.enemies[index]
 
 class GameActionAttack:
     def __init__(self, attackname, parentitem, attackdef):
         self.name = attackdef.get("name", attackname)
         self.target = attackdef.get("target", "single")
         self.stat = attackdef.get("stat", "none").lower()
+        self.stat_negate = attackdef.get("stat-negate", False)
         self.bonus = attackdef.get("bonus", 0)
+        self.damage = attackdef.get("damage", 1)
         self.parentitem = parentitem
     def format_info(self):
+        c = ""
+        if self.stat_negate:
+            c = "-"
         if self.stat == "none":
             return "+" + str(self.bonus)
         elif self.bonus == 0:
-            return self.stat.upper()
+            return c + self.stat.upper()
         else:
-            return self.stat.upper() + "+" + str(self.bonus)
+            return c + self.stat.upper() + "+" + str(self.bonus)
     def use(self, gamedata, shared):
         target = shared.get("target")
         if target == None:
@@ -43,8 +34,11 @@ class GameActionAttack:
         dice_stat = None
         player_stat_value = 0
         if player_stat != None:
-            player_stat_value = player_stat.value
-            dice_stat = gameutil.roll_dice(player_stat.value, 6)
+            if self.stat_negate:
+                player_stat_value = player_stat.maxvalue - player_stat.value + 1
+            else:
+                player_stat_value = player_stat.value
+            dice_stat = gameutil.roll_dice(player_stat_value, 6)
         else:
             dice_stat = []
         if self.bonus == 0:
@@ -65,8 +59,8 @@ class GameActionAttack:
         fmt_target = ' '.join((str(x) for x in target_dice))
         print("The {} rolled [{}] = {}".format(target.name, fmt_target, target_roll_total))
         if roll_total >= target_roll_total:
-            print("You hit the {} for 1 damage!".format(target.name))
-            target.health.subtract(1)
+            print("You hit the {} for {} damage!".format(target.name, self.damage))
+            target.health.subtract(self.damage)
         else:
             print("You missed the {}.".format(target.name))
         return True
