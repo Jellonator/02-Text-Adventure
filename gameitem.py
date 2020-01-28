@@ -1,7 +1,7 @@
 import gameutil
 
 def choose_enemy(gamedata):
-    return gameutil.choose_from_list(gamedata.enemies, True, "Choose an enemy to attack")
+    return gameutil.choose_from_list(gamedata.encounter, True, "Choose an enemy to attack")
     # for i, enemy in enumerate(gamedata.enemies):
     #     print("{}. {}".format(i + 1, enemy.name))
     # index = -1
@@ -40,6 +40,12 @@ class GameActionAttack:
             shared["target"] = target
         print("Attacking {}".format(target.name))
         return True
+    def __str__(self):
+        if self.parentitem != None:
+            return "{} ({}) [{}]".format(self.name, self.parentitem.name, self.format_info())
+        else:
+            return "{} [{}]".format(self.name, self.format_info())
+
 class GameItem:
     def __init__(self, itemname, itemdef):
         self.name = itemdef.get("name", itemname)

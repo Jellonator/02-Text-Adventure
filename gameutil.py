@@ -96,8 +96,8 @@ def choose_from_list(ls, cancancel, prompt):
     if cancancel:
         prompt = prompt + " [or 'cancel' to cancel]"
     prompt = prompt + ": "
-    for i, enemy in enumerate(ls):
-        print("{}. {}".format(i + 1, enemy.name))
+    for i, name in enumerate(ls):
+        print("{}. {}".format(i + 1, str(name)))
     index = -1
     while not index in range(len(ls)):
         try:

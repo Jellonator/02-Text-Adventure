@@ -135,15 +135,17 @@ def action_inventory(gamedata, args):
         print("Too many arguments to 'inventory'")
 
 def action_attack(gamedata, args):
-    print(gamedata.player.get_attacks())
-    # if len(args) == 0:
-    #     # choose attack
-    #     pass
-    # elif len(args) == 1:
-    #     # do attack
-    #     pass
-    # else:
-    #     print("Too many arguments to 'attack'")
+    if len(args) == 0:
+        if len(gamedata.encounter) == 0:
+            print("No enemies to attack.")
+            return
+        attacks = gamedata.player.get_attacks()
+        attack = gameutil.choose_from_list(attacks, True, "Choose an attack")
+        if attack == None:
+            return
+        attack.use(gamedata, {})
+    else:
+        print("Too many arguments to 'attack'")
 
 def enter_location(gamedata, location):
     if location == gamedata.room:
@@ -164,6 +166,22 @@ def enter_location(gamedata, location):
             print(roomdata["desc"])
         else:
             print("There is nothing noteworthy about this room.")
+        if "encounter" in roomdata and location not in gamedata.cleared_combats:
+            for enemyname in roomdata["encounter"]:
+                if enemyname in gamedata.enemydefs:
+                    enemy = gameenemy.GameEnemy(enemyname, gamedata.enemydefs[enemyname])
+                    gamedata.encounter.append(enemy)
+                else:
+                    print("Unknown enemy '{}'".format(enemyname))
+            if len(gamedata.encounter) > 0:
+                print("You were ambushed by {}!".format(gameutil.gen_ambush_text(gamedata.encounter)))
+    else:
+        print("Unrecognized location '{}'".format(location))
+
+def render(gamedata):
+    print(gamedata.player.format_string())
+    roomdata = gamedata.level[gamedata.room]
+    if len(gamedata.encounter) == 0:
         if "exits" in roomdata and len(roomdata["exits"]) > 0:
             exitdefs = roomdata["exits"]
             exitnum = len(exitdefs)
@@ -178,22 +196,13 @@ def enter_location(gamedata, location):
                 if exittarget in gamedata.explored and exittarget in gamedata.level:
                     exitinfo = gamedata.level[exittarget]["name"]
                 print("    {}. {}:\t{}".format(i, exitname, exitinfo))
+            print("Enter 'move location' to move to another location")
         else:
-            print("There appears to be nowhere to go. That's unfortunate. Game over I guess?")
-        if "encounter" in roomdata and location not in gamedata.cleared_combats:
-            for enemyname in roomdata["encounter"]:
-                if enemyname in gamedata.enemydefs:
-                    enemy = gameenemy.GameEnemy(enemyname, gamedata.enemydefs[enemyname])
-                    gamedata.encounter.append(enemy)
-                else:
-                    print("Unknown enemy '{}'".format(enemyname))
-            if len(gamedata.encounter) > 0:
-                print("You were ambushed by {}!".format(gameutil.gen_ambush_text(gamedata.encounter)))
-    else:
-        print("Unrecognized location '{}'".format(location))
+            print("There doesn't appear to be anywhere to go...")
 
 def game_loop(gamedata):
     while not gamedata.finished:
+        render(gamedata)
         userinput = input("> ").lower().strip()
         userargs = userinput.split()
         if len(userargs) > 0:
@@ -212,7 +221,6 @@ def main():
     enemydefs = load_json(FILE_ENEMIES)
     
     player = character.generate_character(classdefs, items)
-    print(player.format_string())
     gamedata = GameData(level, items, player, enemydefs)
     print("Type 'help' for information.")
     enter_location(gamedata, "WHOUS")

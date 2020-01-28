@@ -8,3 +8,5 @@ class GameEnemy:
         self.description = enemydata.get("desc", "")
     def is_dead(self):
         return self.health.value == 0
+    def __str__(self):
+        return self.name
