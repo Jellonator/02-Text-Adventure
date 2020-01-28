@@ -2,7 +2,7 @@
     "WARRIOR": {
         "description": "A strong, brutish warrior. Prefers to settle fights with their impeccable\nstrength.",
         "stat_max": {
-            "STR": 5,
+            "STR": 4,
             "DEX": 3,
             "WIS": 2,
             "SOUL": 3
@@ -10,29 +10,26 @@
         "items": [
             "SWORD",
             "SHIELD"
-        ],
-        "spells": []
+        ]
     },
     "MAGE": {
         "description": "A wise, crafty mage. These spell-casters have many tricks up their sleeve.",
         "stat_max": {
             "STR": 2,
             "DEX": 3,
-            "WIS": 5,
+            "WIS": 4,
             "SOUL": 3
         },
         "items": [
-            "STAFF"
-        ],
-        "spells": [
-            "FIRE"
+            "STAFF",
+            "SPELL_FIRE"
         ]
     },
     "ROGUE": {
         "description": "A cunning, stealthy rogue. These sneaky thieves tend to avoid combat.",
         "stat_max": {
             "STR": 3,
-            "DEX": 5,
+            "DEX": 4,
             "WIS": 3,
             "SOUL": 2
         },
@@ -47,13 +44,11 @@
             "STR": 3,
             "DEX": 2,
             "WIS": 3,
-            "SOUL": 5
+            "SOUL": 4
         },
         "items": [
-            "STAFF"
-        ],
-        "spells": [
-            "LIGHT"
+            "STAFF",
+            "SPELL_LIGHT"
         ]
     },
     "WARLOCK": {
@@ -62,16 +57,14 @@
             "STR": 3,
             "DEX": 3,
             "WIS": 2,
-            "SOUL": 5
+            "SOUL": 4
         },
         "stat_value": {
-            "SOUL": 3
+            "SOUL": 2
         },
         "items": [
-            "DAGGER"
-        ],
-        "spells": [
-            "DRAIN"
+            "DAGGER",
+            "SPELL_DRAIN"
         ]
     }
 }

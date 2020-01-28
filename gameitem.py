@@ -21,16 +21,16 @@ class GameActionAttack:
     def __init__(self, attackname, parentitem, attackdef):
         self.name = attackdef.get("name", attackname)
         self.target = attackdef.get("target", "single")
-        self.stat = attackdef.get("stat", "NONE")
+        self.stat = attackdef.get("stat", "none").lower()
         self.bonus = attackdef.get("bonus", 0)
         self.parentitem = parentitem
     def format_info(self):
-        if self.stat == "NONE":
+        if self.stat == "none":
             return "+" + str(self.bonus)
         elif self.bonus == 0:
-            return self.stat
+            return self.stat.upper()
         else:
-            return self.stat + "+" + str(self.bonus)
+            return self.stat.upper() + "+" + str(self.bonus)
     def use(self, gamedata, shared):
         target = shared.get("target")
         if target == None:
@@ -39,35 +39,27 @@ class GameActionAttack:
                 return False
             shared["target"] = target
         print("Attacking {}".format(target.name))
-        player_stat = None
+        player_stat = gamedata.player.get_stat(self.stat, False)
         dice_stat = None
         player_stat_value = 0
-        if self.stat == "STR":
-            player_stat = gamedata.player.strength
-        elif self.stat == "DEX":
-            player_stat = gamedata.player.dexterity
-        elif self.stat == "WIS":
-            player_stat = gamedata.player.wisdom
-        elif self.stat == "SOUL":
-            player_stat = gamedata.player.soul
         if player_stat != None:
             player_stat_value = player_stat.value
             dice_stat = gameutil.roll_dice(player_stat.value, 6)
         else:
             dice_stat = []
         if self.bonus == 0:
-            print("Rolling {}d6".format(player_stat_value))
+            input("Rolling {}d6 to attack...".format(player_stat_value))
         else:
-            print("Rolling {}d6 + {}d6".format(player_stat_value, self.bonus))
+            input("Rolling {}d6 + {}d6...".format(player_stat_value, self.bonus))
         dice_bonus = gameutil.roll_dice(self.bonus, 6)
         fmt_stat = ' '.join((str(x) for x in dice_stat))
         roll_total = sum(dice_stat) + sum(dice_bonus)
         if self.bonus == 0:
-            print("You rolled: [{} {}] = {}".format(self.stat, fmt_stat, roll_total))
+            print("You rolled: [{} {}] = {}".format(self.stat.upper(), fmt_stat, roll_total))
         else:
             fmt_bonus = ' '.join((str(x) for x in dice_bonus))
-            print("You rolled: [{} {}] [+ {}] = {}".format(self.stat, fmt_stat, fmt_bonus, roll_total))
-        print("The {} rolls {}d6 for defense".format(target.name, target.defense))
+            print("You rolled: [{} {}] [+ {}] = {}".format(self.stat.upper(), fmt_stat, fmt_bonus, roll_total))
+        input("The {} is rolling {}d6 for defense...".format(target.name, target.defense))
         target_dice = target.get_defense_roll()
         target_roll_total = sum(target_dice)
         fmt_target = ' '.join((str(x) for x in target_dice))
