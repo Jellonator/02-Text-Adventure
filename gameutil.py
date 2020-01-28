@@ -68,7 +68,7 @@ def join_list_pretty(ls):
     elif len(ls) == 2:
         return str(ls[0]) + " and " + str(ls[1])
     else:
-        s = ", ".join((str(x) for x in ls[:-1])) + ", and " + str(ls[-1])
+        return ", ".join((str(x) for x in ls[:-1])) + ", and " + str(ls[-1])
 
 def gen_ambush_text(encounter):
     ls = [(x.name, x.nameplural) for x in encounter]
