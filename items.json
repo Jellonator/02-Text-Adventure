@@ -1,5 +1,6 @@
 {
     "PAMPHLET": {
+        "name": "Pamphlet",
         "desc": "A weird pamphlet. Probably shouldn't exist in this game. Maybe recycle it?",
         "actions": {},
         "weight": 0

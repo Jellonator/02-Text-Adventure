@@ -79,6 +79,11 @@ class Character:
         else:
             print("Unknown stat name '{}'".format(name))
             return None
+    def has_item(self, itemname):
+        for item in self.inventory:
+            if item.fullname == itemname:
+                return True
+        return False
 
 def generate_character(classdefs, itemdefs):
     player = Character()

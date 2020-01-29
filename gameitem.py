@@ -185,6 +185,7 @@ def generate_abilities(actions, item, itemlist):
 
 class GameItem:
     def __init__(self, itemname, itemdef):
+        self.fullname = itemname
         self.name = itemdef.get("name", itemname)
         self.weight = itemdef.get("weight", 0)
         self.max_durability = itemdef.get("durability", 1)
