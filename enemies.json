@@ -36,5 +36,33 @@
                 "damage-type": "mental"
             }
         }
+    },
+    "GOBLIN": {
+        "name": "Goblin",
+        "plural": "Goblins",
+        "health": 5,
+        "defense": 4,
+        "actions": {
+            "spear": {
+                "type": "attack",
+                "stat": "STR",
+                "damage": 1,
+                "roll": 4,
+                "desc": "The Goblin attempts to attack you with their spear.",
+                "desc-hit": "The Goblin impales your chest with their spear.",
+                "desc-miss": "The Goblin's spear misses its mark.",
+                "damage-type": "physical"
+            },
+            "spear2": {
+                "type": "attack",
+                "stat": "DEX",
+                "damage": 1,
+                "roll": 4,
+                "desc": "The Goblin attempts to attack you with their spear.",
+                "desc-hit": "The Goblin slices your leg with their spear.",
+                "desc-miss": "The Goblin's spear misses its mark.",
+                "damage-type": "physical"
+            }
+        }
     }
 }

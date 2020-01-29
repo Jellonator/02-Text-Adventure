@@ -26,6 +26,12 @@ class Character:
             "bonus": 0,
             "resist": "mental"
         })
+        self.basicpray = gameitem.GameActionDefend("pray", None, {
+            "name": "Pray",
+            "stat": "SOUL",
+            "bonus": 0,
+            "resist": "mental"
+        })
     def format_string(self):
         return "STR " + self.strength.format_string() + " " \
             "DEX " + self.dexterity.format_string() + " " \

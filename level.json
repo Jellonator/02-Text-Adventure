@@ -49,6 +49,10 @@
                 "exit": "SOUTH",
                 "target": "BRIDGE"
             }
+        ],
+        "encounter": [
+            "GOBLIN",
+            "GOBLIN"
         ]
     }
 }

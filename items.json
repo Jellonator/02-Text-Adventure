@@ -16,6 +16,7 @@
         "durability": 3,
         "attacks": {
             "strike": {
+                "info": "deals 3 damage",
                 "type": "attack",
                 "target": "single",
                 "stat": "STR",
@@ -37,6 +38,7 @@
         "durability": 3,
         "attacks": {
             "strike": {
+                "info": "deals 2 damage",
                 "type": "attack",
                 "target": "single",
                 "stat": "DEX",
@@ -56,15 +58,6 @@
         ],
         "desc": "Great for defense, not so much for offense.",
         "durability": 3,
-        "attacks": {
-            "bash": {
-                "type": "attack",
-                "target": "single",
-                "stat": "STR",
-                "bonus": 1,
-                "damage": 2
-            }
-        },
         "reactions": {
             "block": {
                 "type": "block",
@@ -87,6 +80,7 @@
         "durability": 3,
         "attacks": {
             "strike": {
+                "info": "deals 4 damage",
                 "type": "attack",
                 "target": "single",
                 "stat": "STR",
@@ -108,6 +102,7 @@
         "durability": 3,
         "attacks": {
             "strike": {
+                "info": "deals 2 damage",
                 "type": "attack",
                 "target": "single",
                 "stat": "STR",
@@ -129,6 +124,7 @@
         "durability": 3,
         "attacks": {
             "strike": {
+                "info": "deals 2 damage",
                 "type": "attack",
                 "target": "single",
                 "stat": "STR",
@@ -143,6 +139,7 @@
         "desc": "A healing potion.",
         "actions": {
             "drink": {
+                "info": "heals +2 to a single stat",
                 "type": "heal",
                 "stat": "CHOOSE",
                 "amount": 2
@@ -155,6 +152,7 @@
         "desc": "A spell that deals 3 fire damage.",
         "attacks": {
             "cast": {
+                "info": "deals 3 fire damage",
                 "type": "attack",
                 "target": "single",
                 "stat": "WIS",
@@ -168,6 +166,7 @@
         "desc": "A spell that deals 2 thunder damage to all enemies.",
         "attacks": {
             "cast": {
+                "info": "deals 2 thunder damage",
                 "type": "attack",
                 "target": "all",
                 "stat": "WIS",
@@ -178,9 +177,10 @@
     },
     "SPELL_LIGHT": {
         "name": "Smiting spell",
-        "desc": "A spell that deals 3 smiting damage.",
+        "desc": "A spell that deals 3 holy damage.",
         "attacks": {
             "cast": {
+                "info": "deals 3 holy damage",
                 "type": "attack",
                 "target": "single",
                 "stat": "SOUL",
@@ -206,6 +206,7 @@
         "desc": "A spell that deals 5 necrotic damage.",
         "attacks": {
             "cast": {
+                "info": "deals 5 necrotic damage",
                 "type": "attack",
                 "target": "single",
                 "stat": "SOUL",
@@ -220,6 +221,7 @@
         "desc": "Curses an enemy. They lose one die on their next attack and defense.",
         "attacks": {
             "cast": {
+                "info": "adds 1 curse",
                 "type": "curse",
                 "target": "single",
                 "stat": "SOUL",

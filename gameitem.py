@@ -44,6 +44,7 @@ def try_attack_enemy(gamedata, target, stat, stat_negate, attack_bonus):
 class GameAction:
     def __init__(self, attackname, parentitem, attackdef):
         self.name = attackdef.get("name", attackname)
+        self.info = attackdef.get("info")
         self.parentitem = parentitem
     def format_info(self):
         return ""
@@ -55,6 +56,8 @@ class GameAction:
         info = self.format_info().strip()
         if info != "":
             info = "[{}]".format(info)
+        if self.info != None:
+            info += " - " + self.info
         if self.parentitem != None:
             return "{} ({}) {}".format(self.name, self.parentitem.name, info)
         else:
