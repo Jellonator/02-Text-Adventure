@@ -31,7 +31,7 @@ def try_attack_enemy(gamedata, target, stat, stat_negate, attack_bonus):
     else:
         fmt_bonus = ' '.join((str(x) for x in dice_bonus))
         print("You rolled: [{} {}] [+ {}] = {}".format(stat.upper(), fmt_stat, fmt_bonus, roll_total))
-    input("The {} is rolling {}d6 for defense...".format(target.name, target.defense))
+    input("The {} is rolling {}d6 for defense...".format(target.name, target.get_defense_value()))
     target_dice = target.get_defense_roll()
     target_roll_total = sum(target_dice)
     fmt_target = ' '.join((str(x) for x in target_dice))
@@ -47,6 +47,10 @@ class GameAction:
         self.parentitem = parentitem
     def format_info(self):
         return ""
+    def get_defense(self, player):
+        return 1
+    def does_resist(self, typename):
+        return False
     def __str__(self):
         info = self.format_info().strip()
         if info != "":
@@ -92,6 +96,90 @@ class GameActionAttack(GameAction):
             return False
         return True
 
+class GameActionCurse(GameAction):
+    def __init__(self, attackname, parentitem, attackdef):
+        super().__init__(attackname, parentitem, attackdef)
+        self.target = attackdef.get("target", "single")
+        self.stat = attackdef.get("stat", "none").lower()
+        self.stat_negate = attackdef.get("stat-negate", False)
+        self.bonus = attackdef.get("bonus", 0)
+        self.amount = attackdef.get("amount", 1)
+    def format_info(self):
+        c = ""
+        if self.stat_negate:
+            c = "-"
+        if self.stat == "none":
+            return "+" + str(self.bonus)
+        elif self.bonus == 0:
+            return c + self.stat.upper()
+        else:
+            return c + self.stat.upper() + "+" + str(self.bonus)
+    def use(self, gamedata, shared):
+        target = shared.get("target")
+        if target == None:
+            target = choose_enemy(gamedata)
+            if target == None:
+                return False
+            shared["target"] = target
+        print("Cursing {}".format(target.name))
+        status = try_attack_enemy(gamedata, target, self.stat, self.stat_negate, self.bonus)
+        if status == ATTACK_HIT:
+            plural = ""
+            if self.amount > 1:
+                plural = "s"
+            print("You cursed the {} for {} turn{}!".format(target.name, self.amount, plural))
+            target.curse = max(target.curse, self.amount)
+        elif status == ATTACK_MISS:
+            print("You missed the {}.".format(target.name))
+        else:
+            return False
+        return True
+
+class GameActionDefend(GameAction):
+    def __init__(self, attackname, parentitem, attackdef):
+        super().__init__(attackname, parentitem, attackdef)
+        self.stat = attackdef.get("stat", "none").lower()
+        self.stat_negate = attackdef.get("stat-negate", False)
+        self.bonus = attackdef.get("bonus", 0)
+        self.resist = attackdef.get("resist", "all")
+        if self.resist not in ["all", "physical", "mental"]:
+            print("Unknown resist type '{}'".format(self.resist))
+            self.resist = "all"
+    def format_info(self):
+        c = ""
+        if self.stat_negate:
+            c = "-"
+        if self.stat == "none":
+            return "+" + str(self.bonus)
+        elif self.bonus == 0:
+            return c + self.stat.upper()
+        else:
+            return c + self.stat.upper() + "+" + str(self.bonus)
+    def get_defense(self, player):
+        stat = player.get_stat(self.stat)
+        value = 0
+        if stat != None:
+            if self.stat_negate:
+                value = stat.maxvalue - stat.value + 1
+            else:
+                value = stat.value
+        return value + self.bonus
+    def does_resist(self, typename):
+        return self.resist == "all" or self.resist == typename
+
+def generate_abilities(actions, item, itemlist):
+    for attackname, attackdef in itemlist.items():
+        # print(attackname, attackdef)
+        atype = attackdef.get("type")
+        if atype == "attack":
+            actions[attackname] = GameActionAttack(attackname, item, attackdef)
+        elif atype == "curse":
+            actions[attackname] = GameActionCurse(attackname, item, attackdef)
+        elif atype == "block":
+            actions[attackname] = GameActionDefend(attackname, item, attackdef)
+        else:
+            print("Unrecognized attack type '{}'".format(atype))
+
 class GameItem:
     def __init__(self, itemname, itemdef):
         self.name = itemdef.get("name", itemname)
@@ -102,9 +190,8 @@ class GameItem:
         self.attacks = {}
         self.reactions = {}
         if "attacks" in itemdef:
-            for attackname, attackdef in itemdef["attacks"].items():
-                # print(attackname, attackdef)
-                if attackdef.get("type") == "attack":
-                    self.attacks[attackname] = GameActionAttack(attackname, self, attackdef)
-                else:
-                    print("Unrecognized attack type '{}'".format(attackdef.get("type")))
+            generate_abilities(self.attacks, self, itemdef["attacks"])
+        if "actions" in itemdef:
+            generate_abilities(self.actions, self, itemdef["actions"])
+        if "reactions" in itemdef:
+            generate_abilities(self.reactions, self, itemdef["reactions"])

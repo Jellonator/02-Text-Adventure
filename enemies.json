@@ -2,8 +2,8 @@
     "SPIDER": {
         "name": "Massive Spider",
         "plural": "Massive Spiders",
-        "health": 2,
-        "defense": 2,
+        "health": 3,
+        "defense": 3,
         "actions": {
             "web": {
                 "type": "attack",
@@ -12,7 +12,8 @@
                 "roll": 3,
                 "desc": "The spider shoots a web at you.",
                 "desc-hit": "The spider's web tangles around you.",
-                "desc-miss": "The web misses."
+                "desc-miss": "The web misses.",
+                "damage-type": "physical"
             },
             "bite": {
                 "type": "attack",
@@ -20,8 +21,9 @@
                 "damage": 1,
                 "roll": 3,
                 "desc": "The spider attempts to bite you.",
-                "desc-hit": "The spider misses.",
-                "desc-miss": "The spider sinks its fangs into your arm."
+                "desc-hit": "The spider sinks its fangs into your arm.",
+                "desc-miss": "The spider misses.",
+                "damage-type": "physical"
             },
             "hiss": {
                 "type": "attack",
@@ -29,8 +31,9 @@
                 "damage": 1,
                 "roll": 2,
                 "desc": "The spider hisses at you.",
-                "desc-hit": "You are unaffected by the spider's taunts.",
-                "desc-miss": "You feel a chill go down your spine."
+                "desc-hit": "You feel a chill go down your spine.",
+                "desc-miss": "You are unaffected by the spider's taunts.",
+                "damage-type": "mental"
             }
         }
     }

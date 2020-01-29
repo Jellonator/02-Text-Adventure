@@ -14,6 +14,18 @@ class Character:
             "stat": "STR",
             "bonus": 0
         })
+        self.basicavoid = gameitem.GameActionDefend("dodge", None, {
+            "name": "Dodge",
+            "stat": "DEX",
+            "bonus": 0,
+            "resist": "physical"
+        })
+        self.basicresist = gameitem.GameActionDefend("resist", None, {
+            "name": "Resist",
+            "stat": "WIS",
+            "bonus": 0,
+            "resist": "mental"
+        })
     def format_string(self):
         return "STR " + self.strength.format_string() + " " \
             "DEX " + self.dexterity.format_string() + " " \
@@ -27,6 +39,20 @@ class Character:
             for attack in item.attacks.values():
                 ls.append(attack)
         return ls
+    def get_defense_roll(self, dtype):
+        available_reactions = []
+        for item in self.inventory:
+            for reaction in item.reactions.values():
+                if reaction.does_resist(dtype):
+                    available_reactions.append(reaction)
+        if self.basicavoid.does_resist(dtype):
+            available_reactions.append(self.basicavoid)
+        if self.basicresist.does_resist(dtype):
+            available_reactions.append(self.basicresist)
+        if len(available_reactions) == 0:
+            return 0
+        reaction = gameutil.choose_from_list(available_reactions, False, "Choose a reaction")
+        return reaction.get_defense(self)
     def get_stat(self, name, cancancelchoose=False, chooseprompt="Choose a stat to use"):
         if name == "str":
             return self.strength

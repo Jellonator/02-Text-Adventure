@@ -217,7 +217,7 @@
     },
     "SPELL_CURSE": {
         "name": "Curse spell",
-        "desc": "Curses an enemy. Their next two attacks lose one attack die.",
+        "desc": "Curses an enemy. They lose one die on their next attack and defense.",
         "attacks": {
             "cast": {
                 "type": "curse",
@@ -225,7 +225,7 @@
                 "stat": "SOUL",
                 "stat-negate": true,
                 "bonus": 3,
-                "amount": 2
+                "amount": 1
             }
         }
     }

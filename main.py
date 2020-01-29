@@ -144,8 +144,28 @@ def action_attack(gamedata, args):
         if attack == None:
             return
         attack.use(gamedata, {})
+        do_enemy_turn(gamedata)
     else:
         print("Too many arguments to 'attack'")
+
+def remove_dead_enemies(gamedata):
+    i = 0
+    prevlen = len(gamedata.encounter)
+    while i < len(gamedata.encounter):
+        enemy = gamedata.encounter[i]
+        if enemy.is_dead():
+            gamedata.encounter.pop(i)
+            print("You killed the {}!".format(enemy.name))
+        else:
+            i += 1
+    if len(gamedata.encounter) == 0 and prevlen > 0:
+        print("You defeated all of the enemies!")
+        input("Press enter to continue...")
+
+def do_enemy_turn(gamedata):
+    remove_dead_enemies(gamedata)
+    for enemy in gamedata.encounter:
+        enemy.do_turn(gamedata)
 
 def enter_location(gamedata, location):
     if location == gamedata.room:
@@ -203,18 +223,7 @@ def render(gamedata):
         print("Type 'attack' to attack an enemy")
 
 def update(gamedata):
-    i = 0
-    prevlen = len(gamedata.encounter)
-    while i < len(gamedata.encounter):
-        enemy = gamedata.encounter[i]
-        if enemy.is_dead():
-            gamedata.encounter.pop(i)
-            print("You killed the {}!".format(enemy.name))
-        else:
-            i += 1
-    if len(gamedata.encounter) == 0 and prevlen > 0:
-        print("You defeated all of the enemies!")
-        input("Press enter to continue...")
+    remove_dead_enemies(gamedata)
 
 def game_loop(gamedata):
     while not gamedata.finished:
