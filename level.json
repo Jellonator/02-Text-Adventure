@@ -9,31 +9,10 @@
                 "target": "FOREST1"
             }
         ],
-        "interact": {
+        "items": {
             "pamphlet": {
-                "take": {
-                    "type": "if",
-                    "flag": "WHOUS_PAMPHLET",
-                    "default": true,
-                    "true": [
-                        {
-                            "type": "give",
-                            "item": "PAMPHLET"
-                        }, {
-                            "type": "setflag",
-                            "flag": "WHOUS_PAMPHLET",
-                            "value": false
-                        }
-                    ],
-                    "false": "You already took the pamphlet."
-                },
-                "look": {
-                    "type": "if",
-                    "flag": "WHOUS_PAMPHLET",
-                    "default": true,
-                    "true": "There is a pamphlet laying on the ground.",
-                    "false": "You already took the pamphlet."
-                }
+                "look": "There is a pamphlet laying on the ground.",
+                "item": "PAMPHLET"
             }
         }
     },

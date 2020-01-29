@@ -27,9 +27,51 @@ def load_json(name: str):
         print("There was a problem reading either the game or item file.")
         os._exit(1)
 
+def preprocess_level_items(roomname, room):
+    if not "items" in room:
+        return
+    items = room["items"]
+    if not "interact" in room:
+        room["interact"] = {}
+    interact = room["interact"]
+    for itemname, itemdef in items.items():
+        if itemname in interact:
+            continue
+        flag = "@{}_{}".format(roomname, itemname)
+        itemkey = itemdef.get("item")
+        data = {
+            "take": {
+                "type": "if",
+                "flag": flag,
+                "default": True,
+                "true": [
+                    {
+                        "type": "give",
+                        "item": itemkey
+                    }, {
+                        "type": "setflag",
+                        "flag": flag,
+                        "value": False
+                    }
+                ],
+                "false": "You already took the {}.".format(itemname)
+            },
+            "look": {
+                "type": "if",
+                "flag": flag,
+                "default": True,
+                "true": itemdef.get("look", "There is a {}.".format(itemname)),
+                "false": "You already took the {}.".format(itemname)
+            }
+        }
+        interact[itemname] = data
+
+
 class GameData:
     def __init__(self, leveldata, itemdata, player, enemydefs):
         self.level = leveldata
+        for roomname, room in self.level.items():
+            preprocess_level_items(roomname, room)
         self.items = itemdata
         self.player = player
         self.enemydefs = enemydefs
