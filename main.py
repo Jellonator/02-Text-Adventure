@@ -14,6 +14,7 @@ FILE_LEVEL = 'level.json'
 FILE_ITEMS = 'items.json'
 FILE_CLASSES = "classes.json"
 FILE_ENEMIES = "enemies.json"
+INTERACT_COMMANDS = ["look", "search", "take"]
 
 # Load the contents of the files into the game and items dictionaries. You can largely ignore this
 # Sorry it's messy, I'm trying to account for any potential craziness with the file location
@@ -143,8 +144,8 @@ def action_attack(gamedata, args):
         attack = gameutil.choose_from_list(attacks, True, "Choose an attack")
         if attack == None:
             return
-        attack.use(gamedata, {})
-        do_enemy_turn(gamedata)
+        if attack.use(gamedata, {}) != False:
+            do_enemy_turn(gamedata)
     else:
         print("Too many arguments to 'attack'")
 
@@ -176,10 +177,10 @@ def enter_location(gamedata, location):
         gamedata.lastroom = gamedata.room
         gamedata.room = location
         roomdata = gamedata.level[location]
-        if "name" in roomdata:
-            print("You enter the '{}'.".format(roomdata["name"]))
-        else:
-            print("You enter the room.")
+        # if "name" in roomdata:
+        #     print("You enter the '{}'.".format(roomdata["name"]))
+        # else:
+        #     print("You enter the room.")
         if "desc-post-combat" in roomdata and location in gamedata.cleared_combats:
             print(roomdata["desc-post-combat"])
         if "desc" in roomdata:
@@ -219,6 +220,7 @@ def render(gamedata):
             print("Enter 'move location' to move to another location")
         else:
             print("There doesn't appear to be anywhere to go...")
+        print("Use 'search', 'look', or 'take' to interact with objects.")
     else:
         print("Type 'attack' to attack an enemy")
 
@@ -235,6 +237,45 @@ def game_loop(gamedata):
             args = userargs[1:]
             if action in gamedata.actions:
                 gamedata.actions[action].func(gamedata, args)
+            elif action in INTERACT_COMMANDS:
+                if len(gamedata.encounter) > 0 and action != "look":
+                    print("You can't do that while you're fighting.")
+                elif len(args) == 0:
+                    if action == "look":
+                        if len(gamedata.encounter) > 0:
+                            print("You see {}".format(gameutil.gen_ambush_text(gamedata.encounter)))
+                        else:
+                            roomdata = gamedata.level[gamedata.room]
+                            print(roomdata.get("look", "There's not much to look at."))
+                    else:
+                        print("Not enough arguments to '{}'".format(action))
+                elif len(args) == 1:
+                    fmt_verb = action
+                    if action == "look":
+                        fmt_verb += " at"
+                    directobject = args[0]
+                    if len(gamedata.encounter) > 0 and action == "look":
+                        did_find = False
+                        for enemy in gamedata.encounter:
+                            if enemy.shortname.lower() == directobject or enemy.name.lower() == directobject:
+                                print(enemy.look)
+                                did_find = True
+                                break
+                        if not did_find:
+                            print("There is no {} to look at".format(directobject))
+                    else:
+                        roomdata = gamedata.level[gamedata.room].get("interact", {})
+                        if directobject in roomdata:
+                            objectdata = roomdata[directobject]
+                            if action in objectdata:
+                                data = objectdata[action]
+                                print("Success")
+                            else:
+                                print("Can't {} the {}".format(fmt_verb, directobject))
+                        else:
+                            print("There is no {} to {}".format(directobject, fmt_verb))
+                else:
+                    print("Too many arguments to '{}'".format(action))
             else:
                 print("Unknown action '{}'".format(action))
         update(gamedata)

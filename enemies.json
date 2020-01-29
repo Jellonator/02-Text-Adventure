@@ -2,6 +2,7 @@
     "SPIDER": {
         "name": "Massive Spider",
         "plural": "Massive Spiders",
+        "look": "A massive spider. Like, really big. You've never seen one this big before.",
         "health": 3,
         "defense": 3,
         "actions": {
@@ -40,6 +41,7 @@
     "GOBLIN": {
         "name": "Goblin",
         "plural": "Goblins",
+        "look": "A goblin. These ex-humans have been corrupted by the necromancer's influence over the area.",
         "health": 5,
         "defense": 4,
         "actions": {

@@ -36,7 +36,9 @@ class EnemyAttack:
 
 class GameEnemy:
     def __init__(self, enemyname, enemydata):
+        self.shortname = enemyname
         self.name = enemydata.get("name", enemyname)
+        self.look = enemydata.get("look", "It's a {}".format(self.name))
         self.nameplural = enemydata.get("plural", self.name + "s")
         self.health = gameutil.EnemyHealth(enemydata.get("health", 1))
         self.description = enemydata.get("desc", "")

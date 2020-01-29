@@ -2,6 +2,7 @@
     "WHOUS": {
         "name": "Forest entrance",
         "desc": "You are standing before the forest which surrounds the necromancer's keep.\nDespite the towering trees, the necromancer's skyscraper eclipses them all.",
+        "look": "The trees sway in the chilling wind. There's only one way forward; unless you're a coward I guess.",
         "exits": [
             {
                 "exit": "NORTH",
@@ -12,6 +13,7 @@
     "FOREST1": {
         "name": "Unassuming log",
         "desc": "You happen upon an unassuming log in the forest.",
+        "look": "There's an unassuming log here. A large spider used to live here.",
         "exits": [
             {
                 "exit": "SOUTH",
@@ -24,11 +26,24 @@
         ],
         "encounter": [
             "SPIDER"
-        ]
+        ],
+        "interact": {
+            "log": {
+                "search": {
+                    "type": "print",
+                    "text": "You don't find anything interesting in the log."
+                },
+                "look": {
+                    "type": "print",
+                    "text": "A regular, unassuming log."
+                }
+            }
+        }
     },
     "BRIDGE": {
         "name": "Rickety bridge",
         "desc": "You encounter a river, with only a rickety bridge to cross it.",
+        "look": "There's a rickety bridge here.",
         "exits": [
             {
                 "exit": "SOUTH",
@@ -38,10 +53,19 @@
                 "exit": "NORTH",
                 "target": "GOBLIN_CAMP"
             }
-        ]
+        ],
+        "interact": {
+            "bridge": {
+                "look": {
+                    "type": "print",
+                    "text": "A rickety bridge. It's surprisingly sturdy despite being called \"rickety bridge\"."
+                }
+            }
+        }
     },
     "GOBLIN_CAMP": {
         "name": "Goblin camp",
+        "look": "There's nothing more to note about this area.",
         "desc": "It appears some goblins have set up camp here.",
         "desc-post-combat": "This camp used to belong to some goblins.",
         "exits": [
