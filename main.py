@@ -37,6 +37,7 @@ def preprocess_level_items(roomname, room):
     for itemname, itemdef in items.items():
         if itemname in interact:
             continue
+        # Unique, but a level could check if a specific item was taken anyways
         flag = "@{}_{}".format(roomname, itemname)
         itemkey = itemdef.get("item")
         data = {
@@ -271,6 +272,7 @@ def update(gamedata):
     remove_dead_enemies(gamedata)
 
 def execute_level_action(gamedata, action):
+    # Oh no what have I done
     if isinstance(action, list):
         for item in action:
             execute_level_action(gamedata, item)
@@ -289,7 +291,8 @@ def execute_level_action(gamedata, action):
                 value = gamedata.flags[flagname]
             else:
                 value = action.get("default")
-            if value:
+            testvalue = action.get("value", None)
+            if (testvalue == None and value) or value == testvalue:
                 if "true" in action:
                     execute_level_action(gamedata, action.get("true"))
             else:
@@ -328,6 +331,34 @@ def interact_with(gamedata, action, directobject):
     else:
         print("There is no {} to {}".format(directobject, fmt_verb))
 
+def interact(gamedata, action, args):
+    if len(gamedata.encounter) > 0 and action != "look":
+        print("You can't do that while you're fighting.")
+    elif len(args) == 0:
+        if action == "look":
+            if len(gamedata.encounter) > 0:
+                print("You see {}".format(gameutil.gen_ambush_text(gamedata.encounter)))
+            else:
+                roomdata = gamedata.level[gamedata.room]
+                print(roomdata.get("look", "There's not much to look at."))
+        else:
+            print("Not enough arguments to '{}'".format(action))
+    elif len(args) == 1:
+        directobject = args[0]
+        if len(gamedata.encounter) > 0 and action == "look":
+            did_find = False
+            for enemy in gamedata.encounter:
+                if enemy.shortname.lower() == directobject or enemy.name.lower() == directobject:
+                    print(enemy.look)
+                    did_find = True
+                    break
+            if not did_find:
+                print("There is no {} to look at".format(directobject))
+        else:
+            interact_with(gamedata, action, directobject)
+    else:
+        print("Too many arguments to '{}'".format(action))
+
 def game_loop(gamedata):
     while not gamedata.finished:
         render(gamedata)
@@ -339,32 +370,7 @@ def game_loop(gamedata):
             if action in gamedata.actions:
                 gamedata.actions[action].func(gamedata, args)
             elif action in INTERACT_COMMANDS:
-                if len(gamedata.encounter) > 0 and action != "look":
-                    print("You can't do that while you're fighting.")
-                elif len(args) == 0:
-                    if action == "look":
-                        if len(gamedata.encounter) > 0:
-                            print("You see {}".format(gameutil.gen_ambush_text(gamedata.encounter)))
-                        else:
-                            roomdata = gamedata.level[gamedata.room]
-                            print(roomdata.get("look", "There's not much to look at."))
-                    else:
-                        print("Not enough arguments to '{}'".format(action))
-                elif len(args) == 1:
-                    directobject = args[0]
-                    if len(gamedata.encounter) > 0 and action == "look":
-                        did_find = False
-                        for enemy in gamedata.encounter:
-                            if enemy.shortname.lower() == directobject or enemy.name.lower() == directobject:
-                                print(enemy.look)
-                                did_find = True
-                                break
-                        if not did_find:
-                            print("There is no {} to look at".format(directobject))
-                    else:
-                        interact_with(gamedata, action, directobject)
-                else:
-                    print("Too many arguments to '{}'".format(action))
+                interact(gamedata, action, args)
             else:
                 print("Unknown action '{}'".format(action))
         update(gamedata)
