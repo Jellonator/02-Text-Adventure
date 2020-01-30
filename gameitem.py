@@ -45,6 +45,7 @@ class GameAction:
     def __init__(self, attackname, parentitem, attackdef):
         self.name = attackdef.get("name", attackname)
         self.info = attackdef.get("info")
+        self.single_use = attackdef.get("single-use", False)
         self.parentitem = parentitem
     def format_info(self):
         return ""
@@ -52,6 +53,12 @@ class GameAction:
         return 1
     def does_resist(self, typename):
         return False
+    def use(self, gamedata, shared):
+        self.game_use(gamedata, shared)
+        if self.single_use:
+            gamedata.player.inventory.remove(self.parentitem)
+    def game_use():
+        print("Nothing to do.")
     def __str__(self):
         info = self.format_info().strip()
         if info != "":
@@ -81,7 +88,8 @@ class GameActionAttack(GameAction):
             return c + self.stat.upper()
         else:
             return c + self.stat.upper() + "+" + str(self.bonus)
-    def use(self, gamedata, shared):
+    def game_use(self, gamedata, shared):
+        # Theoretically could be used so that a single attack could hit twice
         target = shared.get("target")
         if target == None:
             target = choose_enemy(gamedata)
@@ -117,7 +125,8 @@ class GameActionCurse(GameAction):
             return c + self.stat.upper()
         else:
             return c + self.stat.upper() + "+" + str(self.bonus)
-    def use(self, gamedata, shared):
+    def game_use(self, gamedata, shared):
+        # Theoretically could be used so that a single attack could hit twice
         target = shared.get("target")
         if target == None:
             target = choose_enemy(gamedata)
@@ -170,6 +179,18 @@ class GameActionDefend(GameAction):
     def does_resist(self, typename):
         return self.resist == "all" or self.resist == typename
 
+class GameActionHeal(GameAction):
+    def __init__(self, attackname, parentitem, attackdef):
+        super().__init__(attackname, parentitem, attackdef)
+        self.stat = attackdef.get("stat", "none").lower()
+        self.amount = attackdef.get("amount", 1)
+    def game_use(self, gamedata, shared):
+        stat = gamedata.player.get_stat(self.stat, True, "Choose a stat to heal")
+        if stat != None:
+            stat.add(self.amount)
+            return True
+        return False
+
 def generate_abilities(actions, item, itemlist):
     for attackname, attackdef in itemlist.items():
         # print(attackname, attackdef)
@@ -180,6 +201,8 @@ def generate_abilities(actions, item, itemlist):
             actions[attackname] = GameActionCurse(attackname, item, attackdef)
         elif atype == "block":
             actions[attackname] = GameActionDefend(attackname, item, attackdef)
+        elif atype == "heal":
+            actions[attackname] = GameActionHeal(attackname, item, attackdef)
         else:
             print("Unrecognized attack type '{}'".format(atype))
 
@@ -189,6 +212,7 @@ class GameItem:
         self.name = itemdef.get("name", itemname)
         self.weight = itemdef.get("weight", 0)
         self.max_durability = itemdef.get("durability", 1)
+        self.desc = itemdef.get("desc", "")
         self.durability = self.max_durability
         self.actions = {}
         self.attacks = {}

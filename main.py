@@ -80,19 +80,20 @@ class GameData:
         self.lastroom = ""
         self.finished = False
         self.actions = {
-            "help": GameAction(action_help, "You're already using this, dummy!"),
-            "stat": GameAction(action_stat, "Gives information on your current stats."),
-            "quit": GameAction(action_quit, "Quit the game."),
-            "move": GameAction(action_move, "Move to another room."),
-            "inventory": GameAction(action_inventory, "List inventory items."),
-            "attack": GameAction(action_attack, "Attack an enemy")
+            "help": PlayerAction(action_help, "You're already using this, dummy!"),
+            "stat": PlayerAction(action_stat, "Gives information on your current stats."),
+            "quit": PlayerAction(action_quit, "Quit the game."),
+            "move": PlayerAction(action_move, "Move to another room."),
+            "inventory": PlayerAction(action_inventory, "List inventory items."),
+            "use": PlayerAction(action_use, "Use an item"),
+            "attack": PlayerAction(action_attack, "Attack an enemy")
         }
         self.flags = {}
         self.explored = {}
         self.cleared_combats = {}
         self.encounter = []
 
-class GameAction:
+class PlayerAction:
     def __init__(self, func, helptext):
         self.func = func
         self.help = helptext
@@ -164,6 +165,23 @@ def action_move(gamedata, args):
     else:
         print("Too many arguments to 'move'.")
 
+def action_use(gamedata, args):
+    if len(args) == 0:
+        if len(gamedata.encounter) == 0:
+            print("No enemies to attack.")
+            return
+        attacks = gamedata.player.get_use_actions()
+        if len(attacks) == 0:
+            print("You have no items which can be used.")
+            return
+        attack = gameutil.choose_from_list(attacks, True, "Choose an item to use")
+        if attack == None:
+            return
+        if attack.use(gamedata, {}) != False:
+            do_enemy_turn(gamedata)
+    else:
+        print("Too many arguments to 'use'")
+
 def action_inventory(gamedata, args):
     if len(args) == 0:
         numitems = len(gamedata.player.inventory)
@@ -175,7 +193,7 @@ def action_inventory(gamedata, args):
             else:
                 print("You have {} items in your inventory:".format(numitems))
             for item in gamedata.player.inventory:
-                print("\t{}".format(item.name))
+                print("\t{} - {}".format(item.name, item.desc))
     else:
         print("Too many arguments to 'inventory'")
 

@@ -59,6 +59,12 @@ class Character:
             return 0
         reaction = gameutil.choose_from_list(available_reactions, False, "Choose a reaction")
         return reaction.get_defense(self)
+    def get_use_actions(self):
+        ls = []
+        for item in self.inventory:
+            for attack in item.actions.values():
+                ls.append(attack)
+        return ls
     def get_stat(self, name, cancancelchoose=False, chooseprompt="Choose a stat to use"):
         if name == "str":
             return self.strength

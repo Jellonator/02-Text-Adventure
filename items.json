@@ -39,12 +39,12 @@
         "durability": 3,
         "attacks": {
             "strike": {
-                "info": "deals 2 damage",
+                "info": "deals 3 damage",
                 "type": "attack",
                 "target": "single",
                 "stat": "DEX",
                 "bonus": 2,
-                "damage": 2
+                "damage": 3
             }
         },
         "weight": 1
@@ -140,8 +140,9 @@
         "desc": "A healing potion.",
         "actions": {
             "drink": {
-                "info": "heals +2 to a single stat",
                 "type": "heal",
+                "info": "heals +2 to a single stat",
+                "single-use": true,
                 "stat": "CHOOSE",
                 "amount": 2
             }
