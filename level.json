@@ -1,7 +1,7 @@
 {
     "WHOUS": {
         "name": "Forest entrance",
-        "desc": "You are standing before the forest which surrounds the necromancer's keep.\nDespite the towering trees, the necromancer's skyscraper eclipses them all.",
+        "desc": "You are standing before the forest which surrounds the necromancer's keep.\nDespite the towering trees, the necromancer's fortress eclipses them all.",
         "look": "The trees sway in the chilling wind. There's only one way forward; unless you're a coward I guess.",
         "exits": [
             {
@@ -83,6 +83,30 @@
         "encounter": [
             "GOBLIN",
             "GOBLIN"
-        ]
+        ],
+        "interact": {
+            "camp": {
+                "search": {
+                    "type": "if",
+                    "flag": "GOBLIN_CAMP_POTION",
+                    "default": false,
+                    "true": "You don't find anything else of note in the camp.",
+                    "false": [
+                        "You found a potion inside one of the goblin's tents and take it. Nice!",
+                        {
+                            "type": "give",
+                            "item": "POTION"
+                        },
+                        {
+                            "type": "setflag",
+                            "flag": "GOBLIN_CAMP_POTION",
+                            "value": true
+                        }
+                    ]
+                },
+                "look": "A couple goblins set up a small camp here.",
+                "take": "This isn't a hiking trip, there's no reason to take the entire camp."
+            }
+        }
     }
 }

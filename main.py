@@ -167,9 +167,6 @@ def action_move(gamedata, args):
 
 def action_use(gamedata, args):
     if len(args) == 0:
-        if len(gamedata.encounter) == 0:
-            print("No enemies to attack.")
-            return
         attacks = gamedata.player.get_use_actions()
         if len(attacks) == 0:
             print("You have no items which can be used.")
