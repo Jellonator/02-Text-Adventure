@@ -300,7 +300,16 @@ def do_enemy_turn(gamedata):
 
 def try_enter_location(gamedata, exitdata):
     location = exitdata["target"]
-    enter_location(gamedata, location)
+    if "flag" in exitdata:
+        required_value = exitdata.get("flag-test", True)
+        flag = exitdata.get("flag")
+        if gamedata.flags.get(flag, exitdata.get("flag-default")) == required_value:
+            enter_location(gamedata, location)
+        else:
+            execute_level_action(gamedata, exitdata.get("fail-text", "For some reason, you weren't able to leave."))
+    else:
+        enter_location(gamedata, location)
+
 
 def enter_location(gamedata, location):
     """
@@ -325,16 +334,16 @@ def enter_location(gamedata, location):
             execute_level_action(gamedata, roomdata["desc"])
         else:
             print(gameutil.FMT_IMPORTANT.format("There is nothing noteworthy about this room."))
-        if "encounter" in roomdata and location not in gamedata.cleared_combats:
-            for enemyname in roomdata["encounter"]:
-                if enemyname in gamedata.enemydefs:
-                    enemy = gameenemy.GameEnemy(enemyname, gamedata.enemydefs[enemyname])
-                    gamedata.encounter.append(enemy)
-                else:
-                    print("Unknown enemy '{}'".format(enemyname))
-            if len(gamedata.encounter) > 0:
-                fmt_text = gameutil.gen_ambush_text(gamedata.encounter)
-                print("You were ambushed by {}!".format(fmt_text))
+        # if "encounter" in roomdata and location not in gamedata.cleared_combats:
+        #     for enemyname in roomdata["encounter"]:
+        #         if enemyname in gamedata.enemydefs:
+        #             enemy = gameenemy.GameEnemy(enemyname, gamedata.enemydefs[enemyname])
+        #             gamedata.encounter.append(enemy)
+        #         else:
+        #             print("Unknown enemy '{}'".format(enemyname))
+        #     if len(gamedata.encounter) > 0:
+        #         fmt_text = gameutil.gen_ambush_text(gamedata.encounter)
+        #         print("You were ambushed by {}!".format(fmt_text))
     else:
         print(gameutil.FMT_IMPORTANT.format("Unrecognized location '{}'".format(location)))
 

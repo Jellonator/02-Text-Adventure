@@ -128,8 +128,8 @@
             "type": "if",
             "default": false,
             "flag": "SHACK_OUTSIDE_OPEN",
-            "true": "You find yourself in front of a small, slightly decrepit shack. The windows are boarded up and the front door is slightly ajar.",
-            "false": "You find yourself in front of a small, slightly decrepit shack. The windows are boarded up and the front door is closed."
+            "true": "You find yourself in front of a small, slightly decrepit shack.\nThe windows are boarded up and the front door is slightly ajar.",
+            "false": "You find yourself in front of a small, slightly decrepit shack.\nThe windows are boarded up and the front door is closed."
         },
         "interact": {
             "door": {
@@ -197,6 +197,7 @@
         ]
     },
     "GATE_INSIDE": {
+        "name": "Inside Gate",
         "exits": [
             {
                 "exit": "SOUTH",

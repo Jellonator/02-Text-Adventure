@@ -1,9 +1,11 @@
 {
     "PAMPHLET": {
         "name": "Pamphlet",
-        "desc": "A weird pamphlet. Probably shouldn't exist in this game. Maybe recycle it?",
-        "actions": {},
-        "weight": 0
+        "desc": "A weird pamphlet. Probably shouldn't exist in this game. Maybe recycle it?"
+    },
+    "GATE_KEY": {
+        "name": "Gate Key",
+        "desc": "A small key. It definitely goes into some kind of gate. You know this intuitively."
     },
     "SWORD": {
         "name": "Broadsword",
