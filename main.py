@@ -124,6 +124,22 @@ class GameData:
         self.explored = {}
         self.cleared_combats = {}
         self.encounter = []
+    def remove_dead_enemies(self):
+        """
+        Removes enemies whose health is zero from the encounter.
+        """
+        i = 0
+        prevlen = len(self.encounter)
+        while i < len(self.encounter):
+            enemy = self.encounter[i]
+            if enemy.is_dead():
+                self.encounter.pop(i)
+                print("You killed the {}!".format(enemy.name))
+            else:
+                i += 1
+        if len(self.encounter) == 0 and prevlen > 0:
+            print("You defeated all of the enemies!")
+            input("Press enter to continue...")
 
 class PlayerAction:
     """
@@ -272,28 +288,11 @@ def action_attack(gamedata, args):
     else:
         print("Too many arguments to 'attack'")
 
-def remove_dead_enemies(gamedata):
-    """
-    Removes enemies whose health is zero from the encounter.
-    """
-    i = 0
-    prevlen = len(gamedata.encounter)
-    while i < len(gamedata.encounter):
-        enemy = gamedata.encounter[i]
-        if enemy.is_dead():
-            gamedata.encounter.pop(i)
-            print("You killed the {}!".format(enemy.name))
-        else:
-            i += 1
-    if len(gamedata.encounter) == 0 and prevlen > 0:
-        print("You defeated all of the enemies!")
-        input("Press enter to continue...")
-
 def do_enemy_turn(gamedata):
     """
     Performs the enemies' turn.
     """
-    remove_dead_enemies(gamedata)
+    gamedata.remove_dead_enemies()
     for enemy in gamedata.encounter:
         enemy.do_turn(gamedata)
 
@@ -364,7 +363,7 @@ def update(gamedata):
     """
     Update the game.
     """
-    remove_dead_enemies(gamedata)
+    gamedata.remove_dead_enemies()
 
 def execute_level_action(gamedata, action):
     """

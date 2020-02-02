@@ -1,4 +1,5 @@
 import gameutil
+import random
 
 def choose_enemy(gamedata):
     """
@@ -124,6 +125,7 @@ class GameActionAttack(GameAction):
     def __init__(self, attackname, parentitem, attackdef):
         super().__init__(attackname, parentitem, attackdef)
         self.target = attackdef.get("target", "single")
+        self.random_count = attackdef.get("random-count", 1)
         self.stat = attackdef.get("stat", "none").lower()
         self.stat_negate = attackdef.get("stat-negate", False)
         self.bonus = attackdef.get("bonus", 0)
@@ -138,14 +140,7 @@ class GameActionAttack(GameAction):
             return c + self.stat.upper()
         else:
             return c + self.stat.upper() + "+" + str(self.bonus)
-    def _game_use(self, gamedata, shared):
-        # Theoretically could be used so that a single attack could hit twice
-        target = shared.get("target")
-        if target == None:
-            target = choose_enemy(gamedata)
-            if target == None:
-                return False
-            shared["target"] = target
+    def _attack(self, gamedata, target):
         print("Attacking {}".format(target.name))
         status = try_attack_enemy(gamedata, target, self.stat, self.stat_negate, self.bonus)
         if status == ATTACK_HIT:
@@ -156,6 +151,28 @@ class GameActionAttack(GameAction):
         else:
             return False
         return True
+    def _game_use(self, gamedata, shared):
+        if self.target == "single":
+            # Theoretically could be used so that a single attack could hit twice
+            target = shared.get("target")
+            if target == None:
+                target = choose_enemy(gamedata)
+                if target == None:
+                    return False
+                shared["target"] = target
+        elif self.target == "all":
+            for enemy in gamedata.encounter:
+                self._attack(gamedata, enemy)
+        elif self.target == "random":
+            for i in range(self.random_count):
+                if len(gamedata.encounter) > 0:
+                    enemy = random.choice(gamedata.encounter)
+                    self._attack(gamedata, enemy)
+                    gamedata.remove_dead_enemies()
+                else:
+                    break
+        else:
+            print("Unknown target value '{}'".format(self.target))
 
 class GameActionCurse(GameAction):
     """

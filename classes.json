@@ -23,6 +23,7 @@
         "items": [
             "STAFF",
             "SPELL_FIRE",
+            "SPELL_THUNDER",
             "SPELL_PROTECT"
         ]
     },

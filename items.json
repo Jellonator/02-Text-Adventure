@@ -165,12 +165,13 @@
     },
     "SPELL_THUNDER": {
         "name": "Thunder Spell",
-        "desc": "A spell that deals 2 thunder damage to all enemies.",
+        "desc": "Thunder! Thunder! Thunder!",
         "attacks": {
             "cast": {
-                "info": "deals 2 thunder damage",
+                "info": "3 random enemies take 2 damage each",
                 "type": "attack",
-                "target": "all",
+                "target": "random",
+                "random-count": 3,
                 "stat": "WIS",
                 "bonus": 0,
                 "damage": 2
@@ -179,7 +180,7 @@
     },
     "SPELL_LIGHT": {
         "name": "Smiting spell",
-        "desc": "A spell that deals 3 holy damage.",
+        "desc": "A spell that excells in smiting heathens.",
         "attacks": {
             "cast": {
                 "info": "deals 3 holy damage",
@@ -204,8 +205,8 @@
         }
     },
     "SPELL_ZAP": {
-        "name": "Dark zap spell",
-        "desc": "A spell that deals 5 necrotic damage.",
+        "name": "Eldritch Blast",
+        "desc": "Hopefully the Wizards of the Coast don't sue me for this one",
         "attacks": {
             "cast": {
                 "info": "deals 5 necrotic damage",
