@@ -71,8 +71,8 @@
     },
     "GOBLIN_CAMP": {
         "name": "Goblin camp",
-        "look": "There's nothing more to note about this area.",
-        "desc": "It appears some goblins have set up camp here.",
+        "look": "A simple goblin camp with a single tent.",
+        "desc": "It appears some goblins had set up camp here; there's a tent and a campfire.",
         "desc-post-combat": "This camp used to belong to some goblins.",
         "exits": [
             {
@@ -85,14 +85,14 @@
             "GOBLIN"
         ],
         "interact": {
-            "camp": {
+            "tent": {
                 "search": {
                     "type": "if",
                     "flag": "GOBLIN_CAMP_POTION",
                     "default": false,
-                    "true": "You don't find anything else of note in the camp.",
+                    "true": "You don't find anything else of note in the tent.",
                     "false": [
-                        "You found a potion inside one of the goblin's tents and take it. Nice!",
+                        "You found a potion inside the goblins' tent and take it. Nice!",
                         {
                             "type": "give",
                             "item": "POTION"
@@ -104,8 +104,13 @@
                         }
                     ]
                 },
-                "look": "A couple goblins set up a small camp here.",
-                "take": "This isn't a hiking trip, there's no reason to take the entire camp."
+                "look": "A couple goblins set up a small tent here.",
+                "take": "This isn't a hiking trip, there's no reason to take a tent."
+            },
+            "campfire": {
+                "search": "There's nothing remaining in the campfire except for a few ashes.",
+                "look": "A campfire. It used to be lit at some point.",
+                "take": "You pick up some ashes, but they slip through your fingers."
             }
         }
     }

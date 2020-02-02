@@ -134,7 +134,7 @@ class GameData:
             enemy = self.encounter[i]
             if enemy.is_dead():
                 self.encounter.pop(i)
-                print("You killed the {}!".format(enemy.name))
+                print("You killed the {}!".format(gameutil.FMT_ENEMY.format(enemy.name)))
             else:
                 i += 1
         if len(self.encounter) == 0 and prevlen > 0:
@@ -162,14 +162,14 @@ def action_help(gamedata, args):
     The 'help' action
     """
     if len(args) == 0:
-        print("Available actions:", ", ".join(gamedata.actions.keys()))
-        print("Type 'help action' for information about the given action.")
+        print(gameutil.FMT_IMPORTANT.format("Available actions:", ", ".join(gamedata.actions.keys())))
+        print(gameutil.FMT_IMPORTANT.format("Type 'help action' for information about the given action."))
     elif len(args) == 1:
         name = args[0]
         if name in gamedata.actions:
             print(gamedata.actions[name].help)
     else:
-        print("Too many arguments to 'help'.")
+        print(gameutil.FMT_IMPORTANT.format("Too many arguments to 'help'."))
 
 def action_stat(gamedata, args):
     """
@@ -177,25 +177,25 @@ def action_stat(gamedata, args):
     """
     if len(args) == 0:
         print(gamedata.player.format_string())
-        print("Type 'stat statname' for more information about the given stat.")
+        print(gameutil.FMT_IMPORTANT.format("Type 'stat statname' for more information about the given stat."))
     elif len(args) == 1:
         name = args[0]
         if name in ["str", "strength"]:
             print("Strength, your physical power and health.")
             print("If you run out, you die from your injuries.")
-            print("STR:", gamedata.player.strength.format_string())
+            print(gameutil.FMT_STAT.format("STR") + ":", gamedata.player.strength.format_string())
         elif name in ["dex", "dexterity"]:
             print("Dexterity, your agility and stealthiness.")
             print("If you run out, you cease to move again.")
-            print("DEX:", gamedata.player.dexterity.format_string())
+            print(gameutil.FMT_STAT.format("DEX") + ":", gamedata.player.dexterity.format_string())
         elif name in ["wis", "wisdom"]:
             print("Wisdom, your mental acuity and intelligence.")
             print("If you run out, you lose the will to keep going.")
-            print("WIS:", gamedata.player.wisdom.format_string())
+            print(gameutil.FMT_STAT.format("WIS") + ":", gamedata.player.wisdom.format_string())
         elif name in ["soul"]:
             print("Soul, your mortal connection.")
             print("If you run out, you succumb to the darkness and your soul is lost forever.")
-            print("SOUL:", gamedata.player.soul.format_string())
+            print(gameutil.FMT_STAT.format("SOUL") + ":", gamedata.player.soul.format_string())
         else:
             print("Unknown stat '{}'".format(name))
     else:
@@ -208,7 +208,7 @@ def action_quit(gamedata, args):
     if len(args) == 0:
         gamedata.finished = True
     else:
-        print("Too many arguments to 'help'.")
+        print("Too many arguments to 'quit'.")
 
 def action_move(gamedata, args):
     """
@@ -267,7 +267,7 @@ def action_inventory(gamedata, args):
             else:
                 print("You have {} items in your inventory:".format(numitems))
             for item in gamedata.player.inventory:
-                print("\t{} - {}".format(item.name, item.desc))
+                print("\t{} - {}".format(gameutil.FMT_OPTION.format(item.name), item.desc))
     else:
         print("Too many arguments to 'inventory'")
 
@@ -280,7 +280,7 @@ def action_attack(gamedata, args):
             print("No enemies to attack.")
             return
         attacks = gamedata.player.get_attacks()
-        attack = gameutil.choose_from_list(attacks, True, "Choose an attack")
+        attack = gameutil.choose_from_list(attacks, True, "Choose an attack", None, gameutil.FMT_NONE)
         if attack == None:
             return
         if attack.use(gamedata) != False:
@@ -314,11 +314,11 @@ def enter_location(gamedata, location):
         gamedata.room = location
         roomdata = gamedata.level[location]
         if "desc-post-combat" in roomdata and location in gamedata.cleared_combats:
-            print(roomdata["desc-post-combat"])
+            print(gameutil.FMT_IMPORTANT.format(roomdata["desc-post-combat"]))
         if "desc" in roomdata:
-            print(roomdata["desc"])
+            print(gameutil.FMT_IMPORTANT.format(roomdata["desc"]))
         else:
-            print("There is nothing noteworthy about this room.")
+            print(gameutil.FMT_IMPORTANT.format("There is nothing noteworthy about this room."))
         if "encounter" in roomdata and location not in gamedata.cleared_combats:
             for enemyname in roomdata["encounter"]:
                 if enemyname in gamedata.enemydefs:
@@ -327,9 +327,10 @@ def enter_location(gamedata, location):
                 else:
                     print("Unknown enemy '{}'".format(enemyname))
             if len(gamedata.encounter) > 0:
-                print("You were ambushed by {}!".format(gameutil.gen_ambush_text(gamedata.encounter)))
+                fmt_text = gameutil.gen_ambush_text(gamedata.encounter)
+                print("You were ambushed by {}!".format(fmt_text))
     else:
-        print("Unrecognized location '{}'".format(location))
+        print(gameutil.FMT_IMPORTANT.format("Unrecognized location '{}'".format(location)))
 
 def render(gamedata):
     """
@@ -351,13 +352,13 @@ def render(gamedata):
                 exittarget = exitdata["target"]
                 if exittarget in gamedata.explored and exittarget in gamedata.level:
                     exitinfo = gamedata.level[exittarget]["name"]
-                print("    {}. {}:\t{}".format(i, exitname, exitinfo))
+                print("    {}. {}:\t{}".format(i, gameutil.FMT_OPTION.format(exitname), exitinfo))
             print("Enter 'move location' to move to another location")
         else:
             print("There doesn't appear to be anywhere to go...")
         print("Use 'search', 'look', or 'take' to interact with objects.")
     else:
-        print("Type 'attack' to attack an enemy")
+        print("Use 'attack', 'use', or 'look' to interact during combat.")
 
 def update(gamedata):
     """
@@ -378,12 +379,12 @@ def execute_level_action(gamedata, action):
         for item in action:
             execute_level_action(gamedata, item)
     elif isinstance(action, str):
-        print(action)
+        print(gameutil.FMT_IMPORTANT.format(action))
     elif isinstance(action, dict):
         atype = action.get("type")
         # Oh no what have I done
         if atype == "print":
-            print(action.get("text"))
+            print(gameutil.FMT_IMPORTANT.format(action.get("text")))
         elif atype == "setflag":
             gamedata.flags[action.get("flag")] = action.get("value")
         elif atype == "if":
@@ -412,7 +413,7 @@ def execute_level_action(gamedata, action):
             itenname = action.get("item")
             item = gameitem.GameItem(itenname, gamedata.items[itenname])
             gamedata.player.inventory.append(item)
-            print("You got the {}".format(item.name))
+            print(gameutil.FMT_IMPORTANT.format("You got the {}".format(item.name)))
         else:
             print("Unknown level action '{}'".format(atype))
     else:
@@ -440,9 +441,9 @@ def interact_with(gamedata, action, directobject):
             data = objectdata[action]
             execute_level_action(gamedata, data)
         else:
-            print("Can't {} the {}".format(fmt_verb, directobject))
+            print(gameutil.FMT_IMPORTANT.format("Can't {} the {}".format(fmt_verb, directobject)))
     else:
-        print("There is no {} to {}".format(directobject, fmt_verb))
+        print(gameutil.FMT_IMPORTANT.format("There is no {} to {}".format(directobject, fmt_verb)))
 
 def interact(gamedata, action, args):
     """
@@ -456,31 +457,31 @@ def interact(gamedata, action, args):
         The arguments to the action
     """
     if len(gamedata.encounter) > 0 and action != "look":
-        print("You can't do that while you're fighting.")
+        print(gameutil.FMT_IMPORTANT.format("You can't do that while you're fighting."))
     elif len(args) == 0:
         if action == "look":
             if len(gamedata.encounter) > 0:
                 print("You see {}".format(gameutil.gen_ambush_text(gamedata.encounter)))
             else:
                 roomdata = gamedata.level[gamedata.room]
-                print(roomdata.get("look", "There's not much to look at."))
+                print(gameutil.FMT_IMPORTANT.format(roomdata.get("look", "There's not much to look at.")))
         else:
-            print("Not enough arguments to '{}'".format(action))
+            print(gameutil.FMT_IMPORTANT.format("Not enough arguments to '{}'".format(action)))
     elif len(args) == 1:
         directobject = args[0]
         if len(gamedata.encounter) > 0 and action == "look":
             did_find = False
             for enemy in gamedata.encounter:
                 if enemy.shortname.lower() == directobject or enemy.name.lower() == directobject:
-                    print(enemy.look)
+                    print(gameutil.FMT_IMPORTANT.format(enemy.look))
                     did_find = True
                     break
             if not did_find:
-                print("There is no {} to look at".format(directobject))
+                print(gameutil.FMT_IMPORTANT.format("There is no {} to look at".format(directobject)))
         else:
             interact_with(gamedata, action, directobject)
     else:
-        print("Too many arguments to '{}'".format(action))
+        print(gameutil.FMT_IMPORTANT.format("Too many arguments to '{}'".format(action)))
 
 def game_loop(gamedata):
     """
@@ -498,7 +499,7 @@ def game_loop(gamedata):
             elif action in INTERACT_COMMANDS:
                 interact(gamedata, action, args)
             else:
-                print("Unknown action '{}'".format(action))
+                print(gameutil.FMT_IMPORTANT.format("Unknown action '{}'".format(action)))
         update(gamedata)
 
 # The main function for the game
@@ -513,7 +514,7 @@ def main():
     
     player = character.generate_character(classdefs, items)
     gamedata = GameData(level, items, player, enemydefs)
-    print("Type 'help' for information.")
+    print(gameutil.FMT_IMPORTANT.format("Type 'help' for information."))
     enter_location(gamedata, "WHOUS")
     game_loop(gamedata)
 

@@ -5,7 +5,8 @@ def choose_enemy(gamedata):
     """
     Choose an enemy to attack
     """
-    return gameutil.choose_from_list(gamedata.encounter, True, "Choose an enemy to attack")
+    return gameutil.choose_from_list(gamedata.encounter, True,
+        "Choose an enemy to attack", None, gameutil.FMT_NONE)
 
 ATTACK_MISS = 0
 ATTACK_HIT = 1
@@ -36,26 +37,23 @@ def try_attack_enemy(gamedata, target, stat, stat_negate, attack_bonus):
             player_stat_value = player_stat.maxvalue - player_stat.value + 1
         else:
             player_stat_value = player_stat.value
-        dice_stat = gameutil.roll_dice(player_stat_value, 6)
+        dice_stat = gameutil.roll_dice(player_stat_value + attack_bonus, 6)
     else:
-        dice_stat = []
+        dice_stat = gameutil.roll_dice(attack_bonus, 6)
     if attack_bonus == 0:
         input("Rolling {}d6 to attack...".format(player_stat_value))
     else:
         input("Rolling {}d6 + {}d6...".format(player_stat_value, attack_bonus))
-    dice_bonus = gameutil.roll_dice(attack_bonus, 6)
-    fmt_stat = ' '.join((str(x) for x in dice_stat))
-    roll_total = sum(dice_stat) + sum(dice_bonus)
-    if attack_bonus == 0:
-        print("You rolled: [{} {}] = {}".format(stat.upper(), fmt_stat, roll_total))
-    else:
-        fmt_bonus = ' '.join((str(x) for x in dice_bonus))
-        print("You rolled: [{} {}] [+ {}] = {}".format(stat.upper(), fmt_stat, fmt_bonus, roll_total))
+    fmt_stat = gameutil.FMT_GOOD.format(' '.join((str(x) for x in dice_stat)))
+    roll_total = sum(dice_stat)
+    fmt_roll_total = gameutil.FMT_GOOD.format(roll_total)
+    print("You rolled: [{}] = {}".format(fmt_stat, fmt_roll_total))
     input("The {} is rolling {}d6 for defense...".format(target.name, target.get_defense_value()))
     target_dice = target.get_defense_roll()
     target_roll_total = sum(target_dice)
-    fmt_target = ' '.join((str(x) for x in target_dice))
-    print("The {} rolled [{}] = {}".format(target.name, fmt_target, target_roll_total))
+    fmt_target = gameutil.FMT_BAD.format(' '.join((str(x) for x in target_dice)))
+    fmt_target_roll_total = gameutil.FMT_BAD.format(target_roll_total)
+    print("The {} rolled [{}] = {}".format(target.name, fmt_target, fmt_target_roll_total))
     if roll_total >= target_roll_total:
         return ATTACK_HIT
     else:
@@ -113,10 +111,11 @@ class GameAction:
             info = "[{}]".format(info)
         if self.info != None:
             info += " - " + self.info
+        fmtname = gameutil.FMT_OPTION.format(self.name)
         if self.parentitem != None:
-            return "{} ({}) {}".format(self.name, self.parentitem.name, info)
+            return "{} ({}) {}".format(fmtname, gameutil.FMT_OPTION.format(self.parentitem.name), info)
         else:
-            return "{} {}".format(self.name, info)
+            return "{} {}".format(fmtname, info)
 
 class GameActionAttack(GameAction):
     """
@@ -137,14 +136,14 @@ class GameActionAttack(GameAction):
         if self.stat == "none":
             return "+" + str(self.bonus)
         elif self.bonus == 0:
-            return c + self.stat.upper()
+            return gameutil.FMT_STAT.format(c + self.stat.upper())
         else:
-            return c + self.stat.upper() + "+" + str(self.bonus)
+            return gameutil.FMT_STAT.format(c + self.stat.upper()) + "+" + str(self.bonus)
     def _attack(self, gamedata, target):
         print("Attacking {}".format(target.name))
         status = try_attack_enemy(gamedata, target, self.stat, self.stat_negate, self.bonus)
         if status == ATTACK_HIT:
-            print("You hit the {} for {} damage!".format(target.name, self.damage))
+            print("You hit the {} for {} damage!".format(target.name, gameutil.FMT_GOOD.format(self.damage)))
             target.health.subtract(self.damage)
         elif status == ATTACK_MISS:
             print("You missed the {}.".format(target.name))
@@ -160,6 +159,7 @@ class GameActionAttack(GameAction):
                 if target == None:
                     return False
                 shared["target"] = target
+            self._attack(gamedata, target)
         elif self.target == "all":
             for enemy in gamedata.encounter:
                 self._attack(gamedata, enemy)
@@ -192,9 +192,9 @@ class GameActionCurse(GameAction):
         if self.stat == "none":
             return "+" + str(self.bonus)
         elif self.bonus == 0:
-            return c + self.stat.upper()
+            return gameutil.FMT_STAT.format(c + self.stat.upper())
         else:
-            return c + self.stat.upper() + "+" + str(self.bonus)
+            return gameutil.FMT_STAT.format(c + self.stat.upper()) + "+" + str(self.bonus)
     def _game_use(self, gamedata, shared):
         # Theoretically could be used so that a single attack could hit twice
         target = shared.get("target")
@@ -237,9 +237,9 @@ class GameActionDefend(GameAction):
         if self.stat == "none":
             return "+" + str(self.bonus)
         elif self.bonus == 0:
-            return c + self.stat.upper()
+            return gameutil.FMT_STAT.format(c + self.stat.upper())
         else:
-            return c + self.stat.upper() + "+" + str(self.bonus)
+            return gameutil.FMT_STAT.format(c + self.stat.upper()) + "+" + str(self.bonus)
     def get_defense(self, player):
         stat = player.get_stat(self.stat)
         value = 0
@@ -261,7 +261,7 @@ class GameActionHeal(GameAction):
         self.stat = attackdef.get("stat", "none").lower()
         self.amount = attackdef.get("amount", 1)
     def format_info(self):
-        return "+{}".format(self.amount)
+        return "+{}".format(gameutil.FMT_GOOD.format(self.amount))
     def _game_use(self, gamedata, shared):
         stat = gamedata.player.get_stat(self.stat, True, "Choose a stat to heal")
         if stat != None:

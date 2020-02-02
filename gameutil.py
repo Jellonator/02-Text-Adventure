@@ -2,6 +2,24 @@ import random
 
 MAX_STAT_VALUE = 10
 
+_FMT_MAGENTA = '\033[95m'
+_FMT_BLUE = '\033[94m'
+_FMT_GREEN = '\033[92m'
+_FMT_YELLOW = '\033[93m'
+_FMT_RED = '\033[91m'
+_FMT_BRIGHT = '\033[97m'
+_FMT_BOLD = '\033[1m'
+_FMT_UNDERLINE = '\033[4m'
+_FMT_END = '\033[0m'
+
+FMT_ENEMY = _FMT_MAGENTA + _FMT_BOLD + "{}" + _FMT_END
+FMT_STAT = _FMT_BLUE + _FMT_BOLD + "{}" + _FMT_END
+FMT_GOOD = _FMT_GREEN + _FMT_BOLD + "{}" + _FMT_END
+FMT_BAD = _FMT_RED + _FMT_BOLD + "{}" + _FMT_END
+FMT_IMPORTANT = _FMT_BOLD + "{}" + _FMT_END
+FMT_OPTION = _FMT_YELLOW + "{}" + _FMT_END
+FMT_NONE = "{}"
+
 class CharacterStat:
     """
     A character stat.
@@ -91,7 +109,9 @@ class CharacterStat:
         """
         Format this stat into a human-readable string
         """
-        return "|" + "+" * self.value + "." * (self.maxvalue - self.value) + "|" + " " * (MAX_STAT_VALUE - self.maxvalue)
+        fmt_stat = FMT_GOOD.format("+" * self.value)
+        fmt_missing = FMT_BAD.format("." * (self.maxvalue - self.value))
+        return "|" + fmt_stat + fmt_missing + "|" + " " * (MAX_STAT_VALUE - self.maxvalue)
 
 class EnemyHealth:
     """
@@ -195,18 +215,18 @@ def gen_ambush_text(encounter):
             num += 1
         else:
             if num == 1:
-                ls2.append("a " + value[0])
+                ls2.append("a " + FMT_ENEMY.format(value[0]))
             elif num > 1:
-                ls2.append("{} {}".format(num, value[1]))
+                ls2.append("{} {}".format(num, FMT_ENEMY.format(value[1])))
             name = value[0]
             num = 1
     if num == 1:
-        ls2.append("a " + value[0])
+        ls2.append("a " + FMT_ENEMY.format(value[0]))
     elif num > 1:
-        ls2.append("{} {}".format(num, value[1]))
+        ls2.append("{} {}".format(num, FMT_ENEMY.format(value[1])))
     return join_list_pretty(ls2)
 
-def choose_from_list(ls, cancancel, prompt):
+def choose_from_list(ls, cancancel, prompt, descriptions=None, fmt=FMT_OPTION):
     """
     Ask the player to choose an option from a list of options.
 
@@ -224,8 +244,15 @@ def choose_from_list(ls, cancancel, prompt):
     if cancancel:
         prompt = prompt + " [or 'cancel' to cancel]"
     prompt = prompt + ": "
+    maxlen = max((len(str(x)) for x in ls))
     for i, name in enumerate(ls):
-        print("{}. {}".format(i + 1, str(name)))
+        desc = ""
+        if descriptions != None and i < len(descriptions):
+            desc = str(descriptions[i])
+        namestr = str(name)
+        spacelen = maxlen + 1 - len(namestr)
+        namestr = fmt.format(namestr)
+        print("    {}. {}{}    {}".format(FMT_IMPORTANT.format(i + 1), namestr, " " * spacelen, desc))
     index = -1
     while not index in range(len(ls)):
         try:

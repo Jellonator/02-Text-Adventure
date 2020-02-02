@@ -52,10 +52,10 @@ class Character:
         """
         Format the player's information
         """
-        return "STR " + self.strength.format_string() + " " \
-            "DEX " + self.dexterity.format_string() + " " \
-            "WIS " + self.wisdom.format_string() + " " \
-            "SOUL " + self.soul.format_string() + " "
+        return gameutil.FMT_STAT.format("STR ") + self.strength.format_string() + " " \
+            + gameutil.FMT_STAT.format("DEX ") + self.dexterity.format_string() + " " \
+            + gameutil.FMT_STAT.format("WIS ") + self.wisdom.format_string() + " " \
+            + gameutil.FMT_STAT.format("SOUL ") + self.soul.format_string() + " "
     def get_carrying_capacity(self):
         """
         Get the player's carrying capacity. Unused.
@@ -129,7 +129,7 @@ class Character:
             return None
         elif name == "choose":
             stats = ["STR", "DEX", "WIS", "SOUL"]
-            value = gameutil.choose_from_list(stats, cancancelchoose, chooseprompt)
+            value = gameutil.choose_from_list(stats, cancancelchoose, chooseprompt, None, gameutil.FMT_STAT)
             if value == None:
                 return None
             return self.get_stat(value.lower(), cancancelchoose)
@@ -162,18 +162,8 @@ def generate_character(classdefs, itemdefs):
     player = Character()
     classlist = [name for name in classdefs]
     classlist.sort()
-    for i, classname in enumerate(classlist):
-        print("{}. {}:\t{}".format(i + 1, classname, classdefs[classname]["description"]))
-    index = -1
-    numclasses = len(classlist)
-    while not index in range(numclasses):
-        try:
-            index = int(input("What is your class? [1-{}]: ".format(numclasses)).lower().strip()) - 1
-            if not index in range(numclasses):
-                print("Input is not a valid index.")
-        except ValueError:
-            print("Input is not a valid integer.")
-    chosen_class_name = classlist[index]
+    classdescs = [classdefs[name]["description"] for name in classlist]
+    chosen_class_name = gameutil.choose_from_list(classlist, False, "What is your class?", classdescs)
     chosen_class_data = classdefs[chosen_class_name]
     if "stat_max" in chosen_class_data:
         class_stats = chosen_class_data["stat_max"]

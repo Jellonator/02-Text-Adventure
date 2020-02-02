@@ -31,17 +31,20 @@ class EnemyAttack:
         input("The {} is rolling {}d6 to attack...".format(enemy.name, self.roll))
         dice_attack = enemy.get_attack_roll(self.roll)
         dice_attack_total = sum(dice_attack)
-        dice_attack_fmt = ' '.join((str(x) for x in dice_attack))
-        print("The {} rolled [{}] = {}".format(enemy.name, dice_attack_fmt, dice_attack_total))
+        dice_attack_fmt = gameutil.FMT_BAD.format(' '.join((str(x) for x in dice_attack)))
+        dice_attack_total_fmt = gameutil.FMT_BAD.format(dice_attack_total)
+        print("The {} rolled [{}] = {}".format(enemy.name, dice_attack_fmt, dice_attack_total_fmt))
         player_roll = player.get_defense_roll(self.damage_type)
         input("Rolling {}d6 for to defend...".format(player_roll))
         dice_player = gameutil.roll_dice(player_roll, 6)
         dice_player_total = sum(dice_player)
-        dice_player_fmt = ' '.join((str(x) for x in dice_player))
-        print("You rolled [{}] = {}".format(dice_player_fmt, dice_player_total))
+        dice_player_fmt = gameutil.FMT_GOOD.format(' '.join((str(x) for x in dice_player)))
+        dice_player_total_fmt = gameutil.FMT_GOOD.format(dice_player_total)
+        print("You rolled [{}] = {}".format(dice_player_fmt, dice_player_total_fmt))
         if dice_attack_total > dice_player_total:
             print(self.description_hit)
-            print("You took {} {} damage!".format(self.damage, self.stat.upper()))
+            print("You took {} {} damage!".format(gameutil.FMT_BAD.format(self.damage),
+                gameutil.FMT_STAT.format(self.stat.upper())))
             stat = player.get_stat(self.stat)
             stat.subtract(self.damage)
         else:
@@ -111,8 +114,10 @@ class GameEnemy:
         else:
             atk = random.choice(self.attacks)
             atk.use(gamedata.player, self)
+    def fmt_name(self):
+        return gameutil.FMT_ENEMY.format(self.name)
     def __str__(self):
-        ret = self.name
+        ret = gameutil.FMT_ENEMY.format(self.name)
         if self.health.value != self.health.maxvalue:
             ret += " [-{}]".format(self.health.maxvalue - self.health.value)
         if self.curse > 0:
