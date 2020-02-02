@@ -138,7 +138,7 @@ class GameData:
             else:
                 i += 1
         if len(self.encounter) == 0 and prevlen > 0:
-            gamedata.cleared_combats[self.room] = true
+            self.cleared_combats[self.room] = True
             print("You defeated all of the enemies!")
             input("Press enter to continue...")
 
@@ -334,16 +334,16 @@ def enter_location(gamedata, location):
             execute_level_action(gamedata, roomdata["desc"])
         else:
             print(gameutil.FMT_IMPORTANT.format("There is nothing noteworthy about this room."))
-        # if "encounter" in roomdata and location not in gamedata.cleared_combats:
-        #     for enemyname in roomdata["encounter"]:
-        #         if enemyname in gamedata.enemydefs:
-        #             enemy = gameenemy.GameEnemy(enemyname, gamedata.enemydefs[enemyname])
-        #             gamedata.encounter.append(enemy)
-        #         else:
-        #             print("Unknown enemy '{}'".format(enemyname))
-        #     if len(gamedata.encounter) > 0:
-        #         fmt_text = gameutil.gen_ambush_text(gamedata.encounter)
-        #         print("You were ambushed by {}!".format(fmt_text))
+        if "encounter" in roomdata and location not in gamedata.cleared_combats:
+            for enemyname in roomdata["encounter"]:
+                if enemyname in gamedata.enemydefs:
+                    enemy = gameenemy.GameEnemy(enemyname, gamedata.enemydefs[enemyname])
+                    gamedata.encounter.append(enemy)
+                else:
+                    print("Unknown enemy '{}'".format(enemyname))
+            if len(gamedata.encounter) > 0:
+                fmt_text = gameutil.gen_ambush_text(gamedata.encounter)
+                print("You were ambushed by {}!".format(fmt_text))
     else:
         print(gameutil.FMT_IMPORTANT.format("Unrecognized location '{}'".format(location)))
 

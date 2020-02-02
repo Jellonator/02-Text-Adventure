@@ -176,15 +176,79 @@
     },
     "SHACK_INSIDE": {
         "name": "Inside Shack",
+        "desc": {
+            "type": "if",
+            "flag": "@SHACK_INSIDE_key",
+            "default": true,
+            "true": "You are inside of the small shack. There is a table in the corner with a key laying on top.",
+            "false": "You are inside of the small shack. There is a table in the corner of the room."
+        },
+        "look": {
+            "type": "if",
+            "flag": "@SHACK_INSIDE_key",
+            "default": true,
+            "true": "You look around and see a table with a key on top of it in the corner of the room.",
+            "false": "You look around and see a table in the corner of the room."
+        },
         "exits": [
             {
                 "exit": "EXIT",
                 "target": "SHACK_OUTSIDE"
             }
+        ],
+        "items": {
+            "key": {
+                "look": "There's a key sitting on the table.",
+                "item": "GATE_KEY"
+            }
+        },
+        "interact": {
+            "table": {
+                "search": "You search for the table. You find it in the corner of the room.",
+                "take": "Although this table probably would fit through the door,\nit would be very difficult to do and require lots of turning.",
+                "look": {
+                    "type": "if",
+                    "flag": "@SHACK_INSIDE_key",
+                    "default": true,
+                    "false": "There is a four-legged table grazing in its natural habitat.",
+                    "true": "The table has a key on top of it."
+                }
+            }
+        },
+        "encounter": [
+            "WRAITH"
         ]
     },
     "GATE_OUTSIDE": {
         "name": "Outside Gate",
+        "desc": "You come across a large gate.\nOn the other side is the Necromancer's tower, stretching into the night sky.",
+        "look": "There is a gate here. There's probably a way to open it.",
+        "interact": {
+            "gate": {
+                "search": "You search the gate. Unforunately, it's sparse bars aren't able to hide anything.",
+                "look": "BEHOLD! It's a gate.",
+                "open": {
+                    "type": "if",
+                    "default": false,
+                    "flag": "GATE_OUTSIDE_UNLOCKED",
+                    "true": "It's already open! But you still turn the key just to be sure...",
+                    "false": {
+                        "type": "has",
+                        "item": "GATE_KEY",
+                        "true": [
+                            "You insert the key into the keyhole. Slowly, you turn the key clockwise,\nthen push gently on the door. The door doesn't budge, woops. You try again,\nexcept this time you turn the key to the counter-clockwise. You gently push on\nthe door again and it opens up!",
+                            {
+                                "type": "setflag",
+                                "value": true,
+                                "flag": "GATE_OUTSIDE_UNLOCKED"
+                            }
+                        ],
+                        "false": "Unfortunately, you need a key to unlock this gate."
+                    }
+                },
+                "take": "You... you realize what you're doing, right? You... you can't. You just can't."
+            }
+        },
         "exits": [
             {
                 "exit": "SOUTH",
@@ -192,12 +256,18 @@
             },
             {
                 "exit": "NORTH",
-                "target": "GATE_INSIDE"
+                "target": "GATE_INSIDE",
+                "revealed": true,
+                "flag": "GATE_OUTSIDE_UNLOCKED",
+                "flag-test": true,
+                "fail-text": "The gate is locked, and doesn't allow you to pass."
             }
         ]
     },
     "GATE_INSIDE": {
         "name": "Inside Gate",
+        "desc": "You are inside the gate.",
+        "look": "There's a gate behind you.",
         "exits": [
             {
                 "exit": "SOUTH",

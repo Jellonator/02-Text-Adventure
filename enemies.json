@@ -66,5 +66,44 @@
                 "damage-type": "physical"
             }
         }
+    },
+    "WRAITH": {
+        "name": "Wraith",
+        "plural": "Wraiths",
+        "look": "The wraith's black cloak obscures its face, assuming it even has one. It carries a scythe.",
+        "health": 8,
+        "defense": 3,
+        "actions": {
+            "slice": {
+                "type": "attack",
+                "stat": "STR",
+                "damage": 1,
+                "roll": 4,
+                "desc": "The wraith lifts is scythe above its shoulders.",
+                "desc-hit": "The wraith swings its scythe and strikes your abdomen.",
+                "desc-miss": "The wraith swings its scythe, but misses.",
+                "damage-type": "physical"
+            },
+            "howl": {
+                "type": "attack",
+                "stat": "WIS",
+                "damage": 1,
+                "roll": 4,
+                "desc": "The wraith unleashes an unearthly howl.",
+                "desc-hit": "You are absolutely shook by the wraith's howl.",
+                "desc-miss": "Your vibe remains unharshed.",
+                "damage-type": "mental"
+            },
+            "soul": {
+                "type": "attack",
+                "stat": "SOUL",
+                "damage": 1,
+                "roll": 4,
+                "desc": "The wraith points its bony finger at you.",
+                "desc-hit": "You feel your soul being pulled away",
+                "desc-miss": "Your soul remains firmly seated within you.",
+                "damage-type": "mental"
+            }
+        }
     }
 }
