@@ -200,19 +200,19 @@
                 "type": "block",
                 "stat": "WIS",
                 "resist": "physical",
-                "bonus": 2
+                "bonus": 1
             }
         }
     },
     "SPELL_DIVINE_PROTECTION": {
         "name": "Divine Protection",
         "desc": "Use this to get someone else to protect you.",
-        "rections": {
+        "reactions": {
             "cast": {
                 "type": "block",
                 "stat": "SOUL",
                 "resist": "all",
-                "bonus": 1
+                "bonus": 2
             }
         }
     },

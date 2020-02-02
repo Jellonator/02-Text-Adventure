@@ -147,6 +147,26 @@ class Character:
             if item.fullname == itemname:
                 return True
         return False
+    def is_dead(self):
+        """
+        Returns true if player is kill
+        """
+        return self.strength.value == 0 or self.dexterity.value == 0 or\
+            self.wisdom.value == 0 or self.soul.value == 0
+    def get_cause_of_death(self):
+        """
+        Get an autopsy report
+        """
+        if self.strength.value == 0:
+            return "str"
+        elif self.dexterity.value == 0:
+            return "dex"
+        elif self.wisdom.value == 0:
+            return "wis"
+        elif self.soul.value == 0:
+            return "soul"
+        else:
+            return None
 
 def generate_character(classdefs, itemdefs):
     """

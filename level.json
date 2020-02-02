@@ -42,7 +42,8 @@
                 "look": {
                     "type": "print",
                     "text": "A regular, unassuming log."
-                }
+                },
+                "take": "The log is much, much too large to take."
             }
         }
     },
@@ -62,10 +63,8 @@
         ],
         "interact": {
             "bridge": {
-                "look": {
-                    "type": "print",
-                    "text": "A rickety bridge. It's surprisingly sturdy despite being called \"rickety bridge\"."
-                }
+                "look": "A rickety bridge. It's surprisingly sturdy despite being called \"rickety bridge\".",
+                "take": "Listen, I know you *really* want take this bridge with you, but you can't. It's public property."
             }
         }
     },
@@ -78,6 +77,14 @@
             {
                 "exit": "SOUTH",
                 "target": "BRIDGE"
+            },
+            {
+                "exit": "NORTH",
+                "target": "GATE_OUTSIDE"
+            },
+            {
+                "exit": "WEST",
+                "target": "SHACK_OUTSIDE"
             }
         ],
         "encounter": [
@@ -110,8 +117,91 @@
             "campfire": {
                 "search": "There's nothing remaining in the campfire except for a few ashes.",
                 "look": "A campfire. It used to be lit at some point.",
-                "take": "You pick up some ashes, but they slip through your fingers."
+                "take": "You pick up some ashes, but they slip through your fingers.",
+                "open": "The campfire is already out in the open."
             }
         }
+    },
+    "SHACK_OUTSIDE": {
+        "name": "Small Shack Exterior",
+        "desc": {
+            "type": "if",
+            "default": false,
+            "flag": "SHACK_OUTSIDE_OPEN",
+            "true": "You find yourself in front of a small, slightly decrepit shack. The windows are boarded up and the front door is slightly ajar.",
+            "false": "You find yourself in front of a small, slightly decrepit shack. The windows are boarded up and the front door is closed."
+        },
+        "interact": {
+            "door": {
+                "open": {
+                    "type": "if",
+                    "default": false,
+                    "flag": "SHACK_OUTSIDE_OPEN",
+                    "true": "The door is already open.",
+                    "false": [
+                        {
+                            "type": "setflag",
+                            "flag": "SHACK_OUTSIDE_OPEN",
+                            "value": true
+                        },
+                        "You open the door. Smart thinking!"
+                    ]
+                },
+                "take": "The door is \"securely\" fastened onto the rusty hinges.",
+                "look": "BEHOLD! It's a door.",
+                "search": "You carefully search the door. Many hundreds of termites appear to have taken up\na cozy residence here."
+            }
+        },
+        "look": {
+            "type": "if",
+            "default": false,
+            "flag": "SHACK_OUTSIDE_OPEN",
+            "true": "There's a small shack. It's front door is slightly ajar.",
+            "false": "There's a small shack. It's front door is closed."
+        },
+        "exits": [
+            {
+                "exit": "EAST",
+                "target": "GOBLIN_CAMP"
+            },
+            {
+                "exit": "ENTER",
+                "target": "SHACK_INSIDE",
+                "revealed": true,
+                "flag": "SHACK_OUTSIDE_OPEN",
+                "flag-test": true,
+                "fail-text": "You try to walk into the shack, but end up walking straight into the door.\nMaybe trying to enter a closed door was not a good idea."
+            }
+        ]
+    },
+    "SHACK_INSIDE": {
+        "name": "Inside Shack",
+        "exits": [
+            {
+                "exit": "EXIT",
+                "target": "SHACK_OUTSIDE"
+            }
+        ]
+    },
+    "GATE_OUTSIDE": {
+        "name": "Outside Gate",
+        "exits": [
+            {
+                "exit": "SOUTH",
+                "target": "GOBLIN_CAMP"
+            },
+            {
+                "exit": "NORTH",
+                "target": "GATE_INSIDE"
+            }
+        ]
+    },
+    "GATE_INSIDE": {
+        "exits": [
+            {
+                "exit": "SOUTH",
+                "target": "GATE_OUTSIDE"
+            }
+        ]
     }
 }
