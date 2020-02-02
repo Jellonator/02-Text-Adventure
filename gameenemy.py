@@ -2,6 +2,9 @@ import gameutil
 import random
 
 class EnemyAttack:
+    """
+    Enemy attack
+    """
     def __init__(self, attackname, attackdef):
         self.description = attackdef.get("desc", "It attacks you")
         self.description_hit = attackdef.get("desc-hit", "It hits you")
@@ -14,6 +17,16 @@ class EnemyAttack:
             print("WARNING: damage type '{}' not recognized.".format(self.damage_type))
             self.damage_type = "physical"
     def use(self, player, enemy):
+        """
+        Use the enemy's attack
+
+        Parameters
+        ----------
+        player: Character
+            The player to attack
+        enemy: GameEnemy
+            The enemy that is attacking
+        """
         print(self.description)
         input("The {} is rolling {}d6 to attack...".format(enemy.name, self.roll))
         dice_attack = enemy.get_attack_roll(self.roll)
@@ -35,6 +48,9 @@ class EnemyAttack:
             print(self.description_miss)
 
 class GameEnemy:
+    """
+    Game enemy
+    """
     def __init__(self, enemyname, enemydata):
         self.shortname = enemyname
         self.name = enemydata.get("name", enemyname)
@@ -57,19 +73,38 @@ class GameEnemy:
         # enemy's attack so that their attack is only cursed for 1 turn.
         self.curse = -1
     def get_defense_value(self):
+        """
+        Get this enemy's defense value
+        """
         defense = self.defense
         if self.curse >= 0 and defense > 1:
             defense -= 1
         return defense
     def get_defense_roll(self):
+        """
+        Roll defense
+
+        Returns a list[int] of dice values
+        """
         return gameutil.roll_dice(self.get_defense_value(), 6)
     def get_attack_roll(self, roll):
+        """
+        Roll attack
+
+        Returns a list[int] of dice values.
+        """
         if self.curse >= 0 and roll > 1:
             roll -= 1
         return gameutil.roll_dice(roll, 6)
     def is_dead(self):
+        """
+        Returns true if the enemy is dead
+        """
         return self.health.value == 0
     def do_turn(self, gamedata):
+        """
+        Perform this enemy's turn
+        """
         self.curse = self.curse - 1
         if len(self.attacks) == 0:
             print("The {} can't do anything.".format(self.name))

@@ -2,6 +2,22 @@ import gameitem
 import gameutil
 
 class Character:
+    """
+    The player.
+
+    Attributes
+    ----------
+    strength: CharacterStat
+        The strength stat
+    dexterity: CharacterStat
+        The dexterity stat
+    wisdom: CharacterStat
+        The wisdom stat
+    soul: CharacterStat
+        The soul stat
+    inventory: list[GameItem]
+        The player's inventory
+    """
     def __init__(self):
         self.strength = gameutil.CharacterStat(3)
         self.dexterity = gameutil.CharacterStat(3)
@@ -33,19 +49,37 @@ class Character:
             "resist": "mental"
         })
     def format_string(self):
+        """
+        Format the player's information
+        """
         return "STR " + self.strength.format_string() + " " \
             "DEX " + self.dexterity.format_string() + " " \
             "WIS " + self.wisdom.format_string() + " " \
             "SOUL " + self.soul.format_string() + " "
     def get_carrying_capacity(self):
+        """
+        Get the player's carrying capacity. Unused.
+        """
         return max(self.strength.value + self.dexterity.value, 4)
     def get_attacks(self):
+        """
+        Get a list of attacks that the player can perform.
+        """
         ls = [self.basicattack]
         for item in self.inventory:
             for attack in item.attacks.values():
                 ls.append(attack)
         return ls
     def get_defense_roll(self, dtype):
+        """
+        Get the player's defense roll, returns an integer as the number of dice
+        that should be rolled.
+
+        Parameters
+        ----------
+        dtype: str
+            The damage type
+        """
         available_reactions = []
         for item in self.inventory:
             for reaction in item.reactions.values():
@@ -60,12 +94,29 @@ class Character:
         reaction = gameutil.choose_from_list(available_reactions, False, "Choose a reaction")
         return reaction.get_defense(self)
     def get_use_actions(self):
+        """
+        Get the player's use actions.
+        """
         ls = []
         for item in self.inventory:
             for attack in item.actions.values():
                 ls.append(attack)
         return ls
     def get_stat(self, name, cancancelchoose=False, chooseprompt="Choose a stat to use"):
+        """
+        Get a player's stat.
+
+        Parameter
+        ---------
+        name: str
+            The name of the stat.
+        cancancelchoose: bool = False
+            If the stat is "choose", then the player may cancel choosing a stat.
+            If True, then this function may return None.
+        chooseprompt: str
+            If the stat is "choose", then this is the promp that the player
+            will see when selecting a stat.
+        """
         if name == "str":
             return self.strength
         elif name == "dex":
@@ -86,12 +137,28 @@ class Character:
             print("Unknown stat name '{}'".format(name))
             return None
     def has_item(self, itemname):
+        """
+        Returns True if the player has the given item.
+
+        itemname: str
+            The name of the item.
+        """
         for item in self.inventory:
             if item.fullname == itemname:
                 return True
         return False
 
 def generate_character(classdefs, itemdefs):
+    """
+    Create a new character.
+
+    Parameters
+    ----------
+    classdefs: dict[str -> dict]
+        Class definitions.
+    itemdefs: dict[str -> dict]
+        Item definitions
+    """
     player = Character()
     classlist = [name for name in classdefs]
     classlist.sort()

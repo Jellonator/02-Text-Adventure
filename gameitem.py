@@ -1,6 +1,9 @@
 import gameutil
 
 def choose_enemy(gamedata):
+    """
+    Choose an enemy to attack
+    """
     return gameutil.choose_from_list(gamedata.encounter, True, "Choose an enemy to attack")
 
 ATTACK_MISS = 0
@@ -8,6 +11,22 @@ ATTACK_HIT = 1
 ATTACK_CANCEL = 2
 
 def try_attack_enemy(gamedata, target, stat, stat_negate, attack_bonus):
+    """
+    Try to attack an enemy; returns ATTACK_HIT on success, ATTACK_MISS on
+    failure, and ATTACK_CANCEL if the attack was cancelled. Actually doing
+    damage to the enemy is the responsibility of the callee.
+
+    Parameters
+    ----------
+    target: GameEnemy
+        The enemy to attack.
+    stat: str
+        The player stat to use for attacking.
+    stat_negate: bool
+        If true, the stat is negated to (stat.maxvalue - stat.value + 1).
+    attack_bonus: int
+        The attack bonus.
+    """
     player_stat = gamedata.player.get_stat(stat, False)
     dice_stat = None
     player_stat_value = 0
@@ -42,22 +61,50 @@ def try_attack_enemy(gamedata, target, stat, stat_negate, attack_bonus):
         return ATTACK_MISS
 
 class GameAction:
+    """
+    A game action. Can be a use item, attack, defend, etc.
+    """
     def __init__(self, attackname, parentitem, attackdef):
         self.name = attackdef.get("name", attackname)
         self.info = attackdef.get("info")
         self.single_use = attackdef.get("single-use", False)
         self.parentitem = parentitem
     def format_info(self):
+        """
+        Format the action's information
+        """
         return ""
     def get_defense(self, player):
+        """
+        Get the defense roll.
+
+        Parameters
+        ----------
+        player: Character
+            The player
+        """
         return 1
     def does_resist(self, typename):
+        """
+        Returns true if this action can be used to resist the given damage type.
+
+        Parameters
+        ----------
+        typename: str
+            The damage type to resist.
+        """
         return False
-    def use(self, gamedata, shared):
-        self.game_use(gamedata, shared)
+    def use(self, gamedata):
+        """
+        Use this item.
+        """
+        self._game_use(gamedata, {})
         if self.single_use:
             gamedata.player.inventory.remove(self.parentitem)
-    def game_use():
+    def _game_use(self, gamedata, shared):
+        """
+        Please don't use this method directly.
+        """
         print("Nothing to do.")
     def __str__(self):
         info = self.format_info().strip()
@@ -71,6 +118,9 @@ class GameAction:
             return "{} {}".format(self.name, info)
 
 class GameActionAttack(GameAction):
+    """
+    Attack action
+    """
     def __init__(self, attackname, parentitem, attackdef):
         super().__init__(attackname, parentitem, attackdef)
         self.target = attackdef.get("target", "single")
@@ -88,7 +138,7 @@ class GameActionAttack(GameAction):
             return c + self.stat.upper()
         else:
             return c + self.stat.upper() + "+" + str(self.bonus)
-    def game_use(self, gamedata, shared):
+    def _game_use(self, gamedata, shared):
         # Theoretically could be used so that a single attack could hit twice
         target = shared.get("target")
         if target == None:
@@ -108,6 +158,9 @@ class GameActionAttack(GameAction):
         return True
 
 class GameActionCurse(GameAction):
+    """
+    Curse action
+    """
     def __init__(self, attackname, parentitem, attackdef):
         super().__init__(attackname, parentitem, attackdef)
         self.target = attackdef.get("target", "single")
@@ -125,7 +178,7 @@ class GameActionCurse(GameAction):
             return c + self.stat.upper()
         else:
             return c + self.stat.upper() + "+" + str(self.bonus)
-    def game_use(self, gamedata, shared):
+    def _game_use(self, gamedata, shared):
         # Theoretically could be used so that a single attack could hit twice
         target = shared.get("target")
         if target == None:
@@ -148,6 +201,9 @@ class GameActionCurse(GameAction):
         return True
 
 class GameActionDefend(GameAction):
+    """
+    Defend action
+    """
     def __init__(self, attackname, parentitem, attackdef):
         super().__init__(attackname, parentitem, attackdef)
         self.stat = attackdef.get("stat", "none").lower()
@@ -180,11 +236,16 @@ class GameActionDefend(GameAction):
         return self.resist == "all" or self.resist == typename
 
 class GameActionHeal(GameAction):
+    """
+    Heal action
+    """
     def __init__(self, attackname, parentitem, attackdef):
         super().__init__(attackname, parentitem, attackdef)
         self.stat = attackdef.get("stat", "none").lower()
         self.amount = attackdef.get("amount", 1)
-    def game_use(self, gamedata, shared):
+    def format_info(self):
+        return "+{}".format(self.amount)
+    def _game_use(self, gamedata, shared):
         stat = gamedata.player.get_stat(self.stat, True, "Choose a stat to heal")
         if stat != None:
             stat.add(self.amount)
@@ -207,6 +268,9 @@ def generate_abilities(actions, item, itemlist):
             print("Unrecognized attack type '{}'".format(atype))
 
 class GameItem:
+    """
+    A game item
+    """
     def __init__(self, itemname, itemdef):
         self.fullname = itemname
         self.name = itemdef.get("name", itemname)

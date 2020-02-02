@@ -16,9 +16,11 @@ FILE_CLASSES = "classes.json"
 FILE_ENEMIES = "enemies.json"
 INTERACT_COMMANDS = ["look", "search", "take"]
 
-# Load the contents of the files into the game and items dictionaries. You can largely ignore this
-# Sorry it's messy, I'm trying to account for any potential craziness with the file location
 def load_json(name: str):
+    """
+    Load the contents of the files into the game and items dictionaries. You can largely ignore this
+    Sorry it's messy, I'm trying to account for any potential craziness with the file location
+    """
     try:
         __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
         with open(os.path.join(__location__, name)) as json_file: 
@@ -28,6 +30,9 @@ def load_json(name: str):
         os._exit(1)
 
 def preprocess_level_items(roomname, room):
+    """
+    Preprocesses a room's data so that all of its defined items can be interacted with.
+    """
     if not "items" in room:
         return
     items = room["items"]
@@ -69,6 +74,33 @@ def preprocess_level_items(roomname, room):
 
 
 class GameData:
+    """
+    A class that contains the entire game's state.
+
+    Attributes
+    ----------
+
+    level: dict[str -> dict]
+        A dictionary of level data where keys are level names and values are
+        level definitions.
+    items: dict[str -> dict]
+        A dictionary of item data where keys are item names and values are item
+        definitions.
+    enemydefs: dict[str -> dict]
+        A dictionary of enemy data where keys are enemy names and values are
+        enemy definitions.
+    player: Character
+        The player state of the game.
+    room: str
+        The room that the player is currently in.
+    lastroom: str
+        The room that the player was in previously.
+    finished: bool
+        Set to true to end the game.
+    actions: dict[str -> PlayerAction]
+        A dictionary of actions that the player can take; keys are action names
+        and values are action definition
+    """
     def __init__(self, leveldata, itemdata, player, enemydefs):
         self.level = leveldata
         for roomname, room in self.level.items():
@@ -94,11 +126,25 @@ class GameData:
         self.encounter = []
 
 class PlayerAction:
+    """
+    An action that the player can make
+
+    Attributes
+    ----------
+
+    func: function(gamedata: Gamedata, args: list[str])
+        A function to call to make this action.
+    help: str
+        Help text for this action.
+    """
     def __init__(self, func, helptext):
         self.func = func
         self.help = helptext
 
 def action_help(gamedata, args):
+    """
+    The 'help' action
+    """
     if len(args) == 0:
         print("Available actions:", ", ".join(gamedata.actions.keys()))
         print("Type 'help action' for information about the given action.")
@@ -110,6 +156,9 @@ def action_help(gamedata, args):
         print("Too many arguments to 'help'.")
 
 def action_stat(gamedata, args):
+    """
+    The 'stat' action. Gives information about the player's stats.
+    """
     if len(args) == 0:
         print(gamedata.player.format_string())
         print("Type 'stat statname' for more information about the given stat.")
@@ -137,14 +186,20 @@ def action_stat(gamedata, args):
         print("Too many arguments to 'stat'.")
 
 def action_quit(gamedata, args):
+    """
+    The 'quit' action. Quits the game.
+    """
     if len(args) == 0:
         gamedata.finished = True
     else:
         print("Too many arguments to 'help'.")
 
 def action_move(gamedata, args):
+    """
+    The 'move' action. Moves the player to another location.
+    """
     if len(args) == 0:
-        print("Need at least one argument to 'move'.")
+        print("Needs one argument to 'move'.")
     elif len(args) == 1:
         if len(gamedata.encounter) > 0:
             print("You're engaged in combat, unable to move!")
@@ -166,6 +221,9 @@ def action_move(gamedata, args):
         print("Too many arguments to 'move'.")
 
 def action_use(gamedata, args):
+    """
+    The 'use' action. Uses an item.
+    """
     if len(args) == 0:
         attacks = gamedata.player.get_use_actions()
         if len(attacks) == 0:
@@ -174,12 +232,15 @@ def action_use(gamedata, args):
         attack = gameutil.choose_from_list(attacks, True, "Choose an item to use")
         if attack == None:
             return
-        if attack.use(gamedata, {}) != False:
+        if attack.use(gamedata) != False:
             do_enemy_turn(gamedata)
     else:
         print("Too many arguments to 'use'")
 
 def action_inventory(gamedata, args):
+    """
+    The 'inventory' action. Lists the items in the player's inventory.
+    """
     if len(args) == 0:
         numitems = len(gamedata.player.inventory)
         if numitems == 0:
@@ -195,6 +256,9 @@ def action_inventory(gamedata, args):
         print("Too many arguments to 'inventory'")
 
 def action_attack(gamedata, args):
+    """
+    The 'attack' action. Attacks an enemy (if available)
+    """
     if len(args) == 0:
         if len(gamedata.encounter) == 0:
             print("No enemies to attack.")
@@ -203,12 +267,15 @@ def action_attack(gamedata, args):
         attack = gameutil.choose_from_list(attacks, True, "Choose an attack")
         if attack == None:
             return
-        if attack.use(gamedata, {}) != False:
+        if attack.use(gamedata) != False:
             do_enemy_turn(gamedata)
     else:
         print("Too many arguments to 'attack'")
 
 def remove_dead_enemies(gamedata):
+    """
+    Removes enemies whose health is zero from the encounter.
+    """
     i = 0
     prevlen = len(gamedata.encounter)
     while i < len(gamedata.encounter):
@@ -223,23 +290,30 @@ def remove_dead_enemies(gamedata):
         input("Press enter to continue...")
 
 def do_enemy_turn(gamedata):
+    """
+    Performs the enemies' turn.
+    """
     remove_dead_enemies(gamedata)
     for enemy in gamedata.encounter:
         enemy.do_turn(gamedata)
 
 def enter_location(gamedata, location):
+    """
+    Enters a new location.
+
+    Parameters
+    ----------
+    location: str
+        The new location to enter.
+    """
     if location == gamedata.room:
-        print("You tried to move there, but you were already there all along!\nFunny how nature do that.")
+        print("You tried to move there, but you were already there all along!\nWacky how nature do that.")
         return
     if location in gamedata.level:
         gamedata.explored[location] = True
         gamedata.lastroom = gamedata.room
         gamedata.room = location
         roomdata = gamedata.level[location]
-        # if "name" in roomdata:
-        #     print("You enter the '{}'.".format(roomdata["name"]))
-        # else:
-        #     print("You enter the room.")
         if "desc-post-combat" in roomdata and location in gamedata.cleared_combats:
             print(roomdata["desc-post-combat"])
         if "desc" in roomdata:
@@ -259,6 +333,9 @@ def enter_location(gamedata, location):
         print("Unrecognized location '{}'".format(location))
 
 def render(gamedata):
+    """
+    Prints useful information to the player.
+    """
     print(gamedata.player.format_string())
     roomdata = gamedata.level[gamedata.room]
     if len(gamedata.encounter) == 0:
@@ -284,10 +361,20 @@ def render(gamedata):
         print("Type 'attack' to attack an enemy")
 
 def update(gamedata):
+    """
+    Update the game.
+    """
     remove_dead_enemies(gamedata)
 
 def execute_level_action(gamedata, action):
-    # Oh no what have I done
+    """
+    Execute the given action.
+
+    Parameters
+    ----------
+    action: dict
+        The action to perform.
+    """
     if isinstance(action, list):
         for item in action:
             execute_level_action(gamedata, item)
@@ -295,6 +382,7 @@ def execute_level_action(gamedata, action):
         print(action)
     elif isinstance(action, dict):
         atype = action.get("type")
+        # Oh no what have I done
         if atype == "print":
             print(action.get("text"))
         elif atype == "setflag":
@@ -332,6 +420,17 @@ def execute_level_action(gamedata, action):
         print("Not a valid level action type")
 
 def interact_with(gamedata, action, directobject):
+    """
+    Interact with the given object with the given action.
+
+    Parameters
+    ----------
+
+    action: str
+        The method of interaction, e.g. look, search, and take.
+    directobject: str
+        The name of the object that is being interacted with.
+    """
     fmt_verb = action
     if action == "look":
         fmt_verb += " at"
@@ -347,6 +446,16 @@ def interact_with(gamedata, action, directobject):
         print("There is no {} to {}".format(directobject, fmt_verb))
 
 def interact(gamedata, action, args):
+    """
+    Interact with the environment
+
+    Parameters
+    ----------
+    action: str
+        The action to perform
+    args: list[str]
+        The arguments to the action
+    """
     if len(gamedata.encounter) > 0 and action != "look":
         print("You can't do that while you're fighting.")
     elif len(args) == 0:
@@ -375,6 +484,9 @@ def interact(gamedata, action, args):
         print("Too many arguments to '{}'".format(action))
 
 def game_loop(gamedata):
+    """
+    Basic game loop
+    """
     while not gamedata.finished:
         render(gamedata)
         userinput = input("> ").lower().strip()
@@ -392,6 +504,9 @@ def game_loop(gamedata):
 
 # The main function for the game
 def main():
+    """
+    Initialize game
+    """
     level = load_json(FILE_LEVEL)
     items = load_json(FILE_ITEMS)
     classdefs = load_json(FILE_CLASSES)
