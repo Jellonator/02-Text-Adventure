@@ -52,7 +52,7 @@
         "items": [
             "STAFF",
             "SPELL_LIGHT",
-            "SPELL_PROTECT"
+            "SPELL_DIVINE_PROTECTION"
         ]
     },
     "WARLOCK": {

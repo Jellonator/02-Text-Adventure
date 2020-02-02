@@ -199,14 +199,26 @@
             "cast": {
                 "type": "block",
                 "stat": "WIS",
-                "resist": "all",
+                "resist": "physical",
                 "bonus": 2
+            }
+        }
+    },
+    "SPELL_DIVINE_PROTECTION": {
+        "name": "Divine Protection",
+        "desc": "Use this to get someone else to protect you.",
+        "rections": {
+            "cast": {
+                "type": "block",
+                "stat": "SOUL",
+                "resist": "all",
+                "bonus": 1
             }
         }
     },
     "SPELL_ZAP": {
         "name": "Eldritch Blast",
-        "desc": "Hopefully the Wizards of the Coast don't sue me for this one",
+        "desc": "Hopefully the Wizards of the Coast don't sue me for this one.",
         "attacks": {
             "cast": {
                 "info": "deals 5 necrotic damage",
