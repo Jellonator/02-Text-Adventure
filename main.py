@@ -14,7 +14,7 @@ FILE_LEVEL = 'level.json'
 FILE_ITEMS = 'items.json'
 FILE_CLASSES = "classes.json"
 FILE_ENEMIES = "enemies.json"
-INTERACT_COMMANDS = ["look", "search", "take"]
+INTERACT_COMMANDS = ["look", "search", "take", "open"]
 
 def load_json(name: str):
     """
@@ -138,6 +138,7 @@ class GameData:
             else:
                 i += 1
         if len(self.encounter) == 0 and prevlen > 0:
+            gamedata.cleared_combats[self.room] = true
             print("You defeated all of the enemies!")
             input("Press enter to continue...")
 
@@ -225,12 +226,12 @@ def action_move(gamedata, args):
         try:
             index = int(name) - 1
             if index in range(len(exitdata)):
-                enter_location(gamedata, exitdata[index]["target"])
+                try_enter_location(gamedata, exitdata[index])
                 return
         except ValueError:
             for data in exitdata:
                 if data["exit"].lower() == name:
-                    enter_location(gamedata, data["target"])
+                    try_enter_location(gamedata, data)
                     return
         print("Invalid exit '{}'".format(name))
     else:
@@ -294,7 +295,12 @@ def do_enemy_turn(gamedata):
     """
     gamedata.remove_dead_enemies()
     for enemy in gamedata.encounter:
-        enemy.do_turn(gamedata)
+        if not gamedata.player.is_dead():
+            enemy.do_turn(gamedata)
+
+def try_enter_location(gamedata, exitdata):
+    location = exitdata["target"]
+    enter_location(gamedata, location)
 
 def enter_location(gamedata, location):
     """
@@ -316,7 +322,7 @@ def enter_location(gamedata, location):
         if "desc-post-combat" in roomdata and location in gamedata.cleared_combats:
             print(gameutil.FMT_IMPORTANT.format(roomdata["desc-post-combat"]))
         if "desc" in roomdata:
-            print(gameutil.FMT_IMPORTANT.format(roomdata["desc"]))
+            execute_level_action(gamedata, roomdata["desc"])
         else:
             print(gameutil.FMT_IMPORTANT.format("There is nothing noteworthy about this room."))
         if "encounter" in roomdata and location not in gamedata.cleared_combats:
@@ -350,13 +356,14 @@ def render(gamedata):
                 exitinfo = "???"
                 exitname = exitdata["exit"]
                 exittarget = exitdata["target"]
-                if exittarget in gamedata.explored and exittarget in gamedata.level:
+                revealed = exitdata.get("revealed", False)
+                if (exittarget in gamedata.explored or revealed) and exittarget in gamedata.level:
                     exitinfo = gamedata.level[exittarget]["name"]
                 print("    {}. {}:\t{}".format(i, gameutil.FMT_OPTION.format(exitname), exitinfo))
             print("Enter 'move location' to move to another location")
         else:
             print("There doesn't appear to be anywhere to go...")
-        print("Use 'search', 'look', or 'take' to interact with objects.")
+        print("Use 'search', 'look', 'take', or 'open' to interact with objects.")
     else:
         print("Use 'attack', 'use', or 'look' to interact during combat.")
 
@@ -365,6 +372,32 @@ def update(gamedata):
     Update the game.
     """
     gamedata.remove_dead_enemies()
+    if gamedata.player.is_dead():
+        reason = gamedata.player.get_cause_of_death()
+        if reason == "str":
+            print(gameutil.FMT_IMPORTANT.format("You perish from your physical injuries."))
+            print(gameutil.FMT_IMPORTANT.format("Congratulations, your death wasn't slow and painful!"))
+        elif reason == "dex":
+            print(gameutil.FMT_IMPORTANT.format("You fall to the ground and are unable to get back up."))
+            if len(gamedata.encounter) > 0:
+                print(gameutil.FMT_IMPORTANT.format("Unable to defend yourself any longer, your enemies finish you off."))
+                print(gameutil.FMT_IMPORTANT.format("Congratulations, you died with honor!"))
+            else:
+                print(gameutil.FMT_IMPORTANT.format("You lay in place in agony, and eventually die of dehydration."))
+                print(gameutil.FMT_IMPORTANT.format("Congratulations, your body decomposed peacefully!"))
+        elif reason == "wis":
+            if len(gamedata.encounter) > 0:
+                print(gameutil.FMT_IMPORTANT.format("You lose the will to defend yourself, and you stare blankly as your enemies finish you off."))
+                print(gameutil.FMT_IMPORTANT.format("Congratulations, you... uh, at least you tried?"))
+            else:
+                print(gameutil.FMT_IMPORTANT.format("You lose the will to continue onward, and you run back home."))
+                print(gameutil.FMT_IMPORTANT.format("Congratulations, you lived!"))
+        elif reason == "soul":
+            print(gameutil.FMT_IMPORTANT.format("You succumb to the darkness. You slowly feel your soul start to slip away,\n"+\
+                "and another one takes its place."))
+            print(gameutil.FMT_IMPORTANT.format("Congratulations, your body is still technically alive!"))
+        input("Press enter to continue...")
+        gamedata.finished = True
 
 def execute_level_action(gamedata, action):
     """
@@ -372,8 +405,17 @@ def execute_level_action(gamedata, action):
 
     Parameters
     ----------
-    action: dict
-        The action to perform.
+    action: str, list, or dict
+        The action to perform. The result depends on the type of the action.
+        dict: Perform a game action, e.g. setting flags, conditionals, etc.
+            "setflag": Set a flag.
+            "if": Conditional
+            "has": Conditional, but to check if the player has an item.
+            "give": Give the player an item
+            "print": Print text
+            "remove": Remove an item
+        list: Run each item of the list as an action sequentially.
+        str: Print out the string.
     """
     if isinstance(action, list):
         for item in action:
@@ -403,17 +445,29 @@ def execute_level_action(gamedata, action):
                     execute_level_action(gamedata, action.get("false"))
         elif atype == "has":
             itemname = action.get("item")
-            if gamedata.player.has_item(itenname):
+            if gamedata.player.has_item(itemname):
                 if "true" in action:
                     execute_level_action(gamedata, action.get("true"))
             else:
                 if "false" in action:
                     execute_level_action(gamedata, action.get("false"))
         elif atype == "give":
-            itenname = action.get("item")
-            item = gameitem.GameItem(itenname, gamedata.items[itenname])
+            itemname = action.get("item")
+            item = gameitem.GameItem(itemname, gamedata.items[itemname])
             gamedata.player.inventory.append(item)
             print(gameutil.FMT_IMPORTANT.format("You got the {}".format(item.name)))
+        elif atype == "remove":
+            itemname = action.get("item")
+            removeall = action.get("remove-all", False)
+            i = 0
+            while i < len(gamedata.player.inventory):
+                item = gamedata.player.inventory[i]
+                if item.fullname == itemname:
+                    gamedata.player.inventory.pop(i)
+                    if not removeall:
+                        break
+                else:
+                    i = i + 1
         else:
             print("Unknown level action '{}'".format(atype))
     else:
@@ -464,7 +518,7 @@ def interact(gamedata, action, args):
                 print("You see {}".format(gameutil.gen_ambush_text(gamedata.encounter)))
             else:
                 roomdata = gamedata.level[gamedata.room]
-                print(gameutil.FMT_IMPORTANT.format(roomdata.get("look", "There's not much to look at.")))
+                execute_level_action(gamedata, roomdata.get("look", "There's not much to look at."))
         else:
             print(gameutil.FMT_IMPORTANT.format("Not enough arguments to '{}'".format(action)))
     elif len(args) == 1:
