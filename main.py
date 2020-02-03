@@ -113,7 +113,7 @@ class GameData:
         self.finished = False
         self.actions = {
             "help": PlayerAction(action_help, "You're already using this, dummy!"),
-            "stat": PlayerAction(action_stat, "Gives information on your current stats."),
+            "stats": PlayerAction(action_stat, "Gives information on your current stats."),
             "quit": PlayerAction(action_quit, "Quit the game."),
             "move": PlayerAction(action_move, "Move to another room."),
             "inventory": PlayerAction(action_inventory, "List inventory items."),
@@ -163,7 +163,7 @@ def action_help(gamedata, args):
     The 'help' action
     """
     if len(args) == 0:
-        print(gameutil.FMT_IMPORTANT.format("Available actions:", ", ".join(gamedata.actions.keys())))
+        print(gameutil.FMT_IMPORTANT.format("Available actions: " + ", ".join(gamedata.actions.keys())))
         print(gameutil.FMT_IMPORTANT.format("Type 'help action' for information about the given action."))
     elif len(args) == 1:
         name = args[0]
@@ -177,28 +177,18 @@ def action_stat(gamedata, args):
     The 'stat' action. Gives information about the player's stats.
     """
     if len(args) == 0:
-        print(gamedata.player.format_string())
-        print(gameutil.FMT_IMPORTANT.format("Type 'stat statname' for more information about the given stat."))
-    elif len(args) == 1:
-        name = args[0]
-        if name in ["str", "strength"]:
-            print("Strength, your physical power and health.")
-            print("If you run out, you die from your injuries.")
-            print(gameutil.FMT_STAT.format("STR") + ":", gamedata.player.strength.format_string())
-        elif name in ["dex", "dexterity"]:
-            print("Dexterity, your agility and stealthiness.")
-            print("If you run out, you cease to move again.")
-            print(gameutil.FMT_STAT.format("DEX") + ":", gamedata.player.dexterity.format_string())
-        elif name in ["wis", "wisdom"]:
-            print("Wisdom, your mental acuity and intelligence.")
-            print("If you run out, you lose the will to keep going.")
-            print(gameutil.FMT_STAT.format("WIS") + ":", gamedata.player.wisdom.format_string())
-        elif name in ["soul"]:
-            print("Soul, your mortal connection.")
-            print("If you run out, you succumb to the darkness and your soul is lost forever.")
-            print(gameutil.FMT_STAT.format("SOUL") + ":", gamedata.player.soul.format_string())
-        else:
-            print("Unknown stat '{}'".format(name))
+        print(gameutil.FMT_STAT.format("STR") + ":", gamedata.player.strength.format_string())
+        print("\tStrength, your physical power and health.")
+        print("\tIf you run out, you die from your injuries.")
+        print(gameutil.FMT_STAT.format("DEX") + ":", gamedata.player.dexterity.format_string())
+        print("\tDexterity, your agility and stealthiness.")
+        print("\tIf you run out, you cease to move again.")
+        print(gameutil.FMT_STAT.format("WIS") + ":", gamedata.player.wisdom.format_string())
+        print("\tWisdom, your mental acuity and intelligence.")
+        print("\tIf you run out, you lose the will to keep going.")
+        print(gameutil.FMT_STAT.format("SOUL") + ":", gamedata.player.soul.format_string())
+        print("\tSoul, your mortal connection.")
+        print("\tIf you run out, you succumb to the darkness and your soul is lost forever.")
     else:
         print("Too many arguments to 'stat'.")
 

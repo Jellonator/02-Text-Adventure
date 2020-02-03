@@ -28,7 +28,9 @@ class Character:
             "name": "Unarmed attack",
             "target": "single",
             "stat": "STR",
-            "bonus": 0
+            "bonus": 0,
+            "damage": 1,
+            "info": "Deals 1 damage."
         })
         self.basicavoid = gameitem.GameActionDefend("dodge", None, {
             "name": "Dodge",
@@ -39,12 +41,6 @@ class Character:
         self.basicresist = gameitem.GameActionDefend("resist", None, {
             "name": "Resist",
             "stat": "WIS",
-            "bonus": 0,
-            "resist": "mental"
-        })
-        self.basicpray = gameitem.GameActionDefend("pray", None, {
-            "name": "Pray",
-            "stat": "SOUL",
             "bonus": 0,
             "resist": "mental"
         })
