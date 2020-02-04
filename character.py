@@ -23,6 +23,7 @@ class Character:
         self.dexterity = gameutil.CharacterStat(3)
         self.wisdom = gameutil.CharacterStat(3)
         self.soul = gameutil.CharacterStat(3)
+        self.barricade = 0
         self.inventory = []
         self.basicattack = gameitem.GameActionAttack("punch", None, {
             "name": "Unarmed attack",
@@ -88,7 +89,7 @@ class Character:
         if len(available_reactions) == 0:
             return 0
         reaction = gameutil.choose_from_list(available_reactions, False, "Choose a reaction")
-        return reaction.get_defense(self)
+        return reaction.get_defense(self) + self.barricade
     def get_use_actions(self):
         """
         Get the player's use actions.
@@ -163,6 +164,8 @@ class Character:
             return "soul"
         else:
             return None
+    def do_turn(self, gamedata):
+        self.barricade = 0
 
 def generate_character(classdefs, itemdefs):
     """

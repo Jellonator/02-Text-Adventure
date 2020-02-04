@@ -249,7 +249,8 @@ def action_inventory(gamedata, args):
     The 'inventory' action. Lists the items in the player's inventory.
     """
     if len(args) == 0:
-        numitems = len(gamedata.player.inventory)
+        inventory = [item for item in gamedata.player.inventory if not item.unlisted]
+        numitems = len(inventory)
         if numitems == 0:
             print("You don't have anything in your inventory.")
         else:
@@ -257,7 +258,7 @@ def action_inventory(gamedata, args):
                 print("You have 1 item in your inventory:")
             else:
                 print("You have {} items in your inventory:".format(numitems))
-            for item in gamedata.player.inventory:
+            for item in inventory:
                 print("\t{} - {}".format(gameutil.FMT_OPTION.format(item.name), item.desc))
     else:
         print("Too many arguments to 'inventory'")
@@ -287,6 +288,7 @@ def do_enemy_turn(gamedata):
     for enemy in gamedata.encounter:
         if not gamedata.player.is_dead():
             enemy.do_turn(gamedata)
+    gamedata.player.do_turn(gamedata)
 
 def try_enter_location(gamedata, exitdata):
     location = exitdata["target"]

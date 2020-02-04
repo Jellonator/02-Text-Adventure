@@ -69,6 +69,13 @@
                 "resist": "physical"
             }
         },
+        "attacks": {
+            "prepare": {
+                "info": "+2 to defense rolls for this turn",
+                "type": "barricade",
+                "amount": 2
+            }
+        },
         "weight": 2
     },
     "WARHAMMER": {
@@ -245,6 +252,18 @@
                 "stat-negate": true,
                 "bonus": 3,
                 "amount": 1
+            }
+        }
+    },
+    "ABILITY_HIDE": {
+        "name": "Hide",
+        "desc": "Allows you to hide",
+        "unlisted": true,
+        "attacks": {
+            "hide": {
+                "info": "+3 to defense rolls for this turn",
+                "type": "barricade",
+                "amount": 3
             }
         }
     }

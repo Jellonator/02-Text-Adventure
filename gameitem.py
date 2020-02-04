@@ -164,7 +164,7 @@ class GameActionAttack(GameAction):
             for enemy in gamedata.encounter:
                 self._attack(gamedata, enemy)
         elif self.target == "random":
-            for i in range(self.random_count):
+            for _i in range(self.random_count):
                 if len(gamedata.encounter) > 0:
                     enemy = random.choice(gamedata.encounter)
                     self._attack(gamedata, enemy)
@@ -269,6 +269,19 @@ class GameActionHeal(GameAction):
             return True
         return False
 
+class GameActionBarricade(GameAction):
+    """
+    Barricade action
+    """
+    def __init__(self, attackname, parentitem, attackdef):
+        super().__init__(attackname, parentitem, attackdef)
+        self.amount = attackdef.get("amount", 1)
+    def format_info(self):
+        return "+{}".format(gameutil.FMT_GOOD.format(self.amount))
+    def _game_use(self, gamedata, shared):
+        gamedata.player.barricade = max(gamedata.player.barricade, self.amount)
+        return True
+
 def generate_abilities(actions, item, itemlist):
     for attackname, attackdef in itemlist.items():
         # print(attackname, attackdef)
@@ -281,6 +294,8 @@ def generate_abilities(actions, item, itemlist):
             actions[attackname] = GameActionDefend(attackname, item, attackdef)
         elif atype == "heal":
             actions[attackname] = GameActionHeal(attackname, item, attackdef)
+        elif atype == "barricade":
+            actions[attackname] = GameActionBarricade(attackname, item, attackdef)
         else:
             print("Unrecognized attack type '{}'".format(atype))
 
@@ -295,6 +310,7 @@ class GameItem:
         self.max_durability = itemdef.get("durability", 1)
         self.desc = itemdef.get("desc", "")
         self.durability = self.max_durability
+        self.unlisted = itemdef.get("unlisted", False)
         self.actions = {}
         self.attacks = {}
         self.reactions = {}
