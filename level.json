@@ -221,7 +221,7 @@
     },
     "GATE_OUTSIDE": {
         "name": "Outside Gate",
-        "desc": "You come across a large gate.\nOn the other side is the Necromancer's tower, stretching into the night sky.",
+        "desc": "You come across a large gate. On the other side is a drawbridge, which leads\ndirectly to the Necromancer's tower.",
         "look": "There is a gate here. There's probably a way to open it.",
         "interact": {
             "gate": {
@@ -256,7 +256,7 @@
             },
             {
                 "exit": "NORTH",
-                "target": "GATE_INSIDE",
+                "target": "DRAWBRIDGE",
                 "revealed": true,
                 "flag": "GATE_OUTSIDE_UNLOCKED",
                 "flag-test": true,
@@ -264,15 +264,25 @@
             }
         ]
     },
-    "GATE_INSIDE": {
-        "name": "Inside Gate",
-        "desc": "You are inside the gate.",
-        "look": "There's a gate behind you.",
+    "DRAWBRIDGE": {
+        "name": "Drawbridge",
+        "desc": "You are standing atop a drawbridge, which sits over a moat.\nThe moat, of course, sits over the ground. The ground, in turn, sits on top of\nthe lithosphere. The drawbridge leads directly to the Necromancer's tower.",
+        "look": "There is an excellent view of the moat from here. At least, you assume there is.\nIt's hard to tell since it is night, but if it were day, hoo boy would this be\nan excellent view!",
         "exits": [
             {
                 "exit": "SOUTH",
                 "target": "GATE_OUTSIDE"
+            },
+            {
+                "exit": "NORTH",
+                "target": "END"
             }
+        ],
+        "encounter": [
+            "ORC"
         ]
+    },
+    "END": {
+
     }
 }

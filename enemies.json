@@ -15,26 +15,6 @@
                 "desc-hit": "The spider's web tangles around you.",
                 "desc-miss": "The web misses.",
                 "damage-type": "physical"
-            },
-            "bite": {
-                "type": "attack",
-                "stat": "STR",
-                "damage": 1,
-                "roll": 3,
-                "desc": "The spider attempts to bite you.",
-                "desc-hit": "The spider sinks its fangs into your arm.",
-                "desc-miss": "The spider misses.",
-                "damage-type": "physical"
-            },
-            "hiss": {
-                "type": "attack",
-                "stat": "WIS",
-                "damage": 1,
-                "roll": 2,
-                "desc": "The spider hisses at you.",
-                "desc-hit": "You feel a chill go down your spine.",
-                "desc-miss": "You are unaffected by the spider's taunts.",
-                "damage-type": "mental"
             }
         }
     },
@@ -103,6 +83,37 @@
                 "desc-hit": "You feel your soul being pulled away",
                 "desc-miss": "Your soul remains firmly seated within you.",
                 "damage-type": "mental"
+            }
+        }
+    },
+    "ORC": {
+        "name": "Orc",
+        "plural": "Orcs",
+        "look": "This big, bulky creature carries a large club.",
+        "health": 10,
+        "defense": 4,
+        "actions": {
+            "prepare": {
+                "type": "wait",
+                "desc": "The Orc lifts their club with both hands and prepares a powerful attack.",
+                "next-action": {
+                    "type": "attack",
+                    "stat": ["STR", "DEX"],
+                    "damage": 1,
+                    "roll": 5,
+                    "desc": "The Orc swings their massive club towards you.",
+                    "desc-hit": "The club slams into your side, knocking the wind out of you.",
+                    "desc-miss": "The Orc narrowly misses crushing you with their club."
+                }
+            },
+            "smash": {
+                "type": "attack",
+                "damage": 1,
+                "stat": "STR",
+                "roll": 4,
+                "desc": "The Orc swings at you with their club.",
+                "desc-hit": "The Orc hits you in the arm with their club.",
+                "desc-miss": "The Orc misses."
             }
         }
     }

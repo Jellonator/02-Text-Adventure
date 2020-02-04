@@ -1,21 +1,14 @@
 import gameutil
 import random
 
-class EnemyAttack:
+class EnemyAction:
     """
-    Enemy attack
+    Enemy Action
     """
     def __init__(self, attackname, attackdef):
-        self.description = attackdef.get("desc", "It attacks you")
-        self.description_hit = attackdef.get("desc-hit", "It hits you")
-        self.description_miss = attackdef.get("desc-miss", "It missed you")
-        self.damage = attackdef.get("damage", 1)
-        self.stat = attackdef.get("stat", "none").lower()
-        self.roll = attackdef.get("roll", 1)
-        self.damage_type = attackdef.get("damage-type", "physical")
-        if self.damage_type not in ["physical", "mental"]:
-            print("WARNING: damage type '{}' not recognized.".format(self.damage_type))
-            self.damage_type = "physical"
+        self.next_action = attackdef.get("next-action")
+        if self.next_action != None:
+            self.next_action = parse_enemy_action("anonymous-action", self.next_action)
     def use(self, player, enemy):
         """
         Use the enemy's attack
@@ -27,6 +20,35 @@ class EnemyAttack:
         enemy: GameEnemy
             The enemy that is attacking
         """
+        self._game_use(player, enemy)
+        enemy.next_action = self.next_action
+    def _game_use(self, player, enemy):
+        """
+        Do not call directly!
+        """
+        print("Nothing to do!")
+
+class EnemyAttack(EnemyAction):
+    """
+    Enemy attack
+    """
+    def __init__(self, attackname, attackdef):
+        super().__init__(attackname, attackdef)
+        self.description = attackdef.get("desc", "It attacks you")
+        self.description_hit = attackdef.get("desc-hit", "It hits you")
+        self.description_miss = attackdef.get("desc-miss", "It missed you")
+        self.damage = attackdef.get("damage", 1)
+        self.stats = attackdef.get("stat", [])
+        if isinstance(self.stats, str):
+            self.stats = [self.stats]
+        for i in range(len(self.stats)):
+            self.stats[i] = self.stats[i].lower()
+        self.roll = attackdef.get("roll", 1)
+        self.damage_type = attackdef.get("damage-type", "physical")
+        if self.damage_type not in ["physical", "mental"]:
+            print("WARNING: damage type '{}' not recognized.".format(self.damage_type))
+            self.damage_type = "physical"
+    def _game_use(self, player, enemy):
         print(self.description)
         input("The {} is rolling {}d6 to attack...".format(enemy.name, self.roll))
         dice_attack = enemy.get_attack_roll(self.roll)
@@ -43,12 +65,34 @@ class EnemyAttack:
         print("You rolled [{}] = {}".format(dice_player_fmt, dice_player_total_fmt))
         if dice_attack_total > dice_player_total:
             print(self.description_hit)
-            print("You took {} {} damage!".format(gameutil.FMT_BAD.format(self.damage),
-                gameutil.FMT_STAT.format(self.stat.upper())))
-            stat = player.get_stat(self.stat)
-            stat.subtract(self.damage)
+            fmt_damage = ["{} {}".format(gameutil.FMT_BAD.format(self.damage),
+                gameutil.FMT_STAT.format(stat.upper())) for stat in self.stats]
+            print("You took {} damage!".format(gameutil.join_list_pretty(fmt_damage)))
+            for stat in self.stats:
+                playerstat = player.get_stat(stat)
+                playerstat.subtract(self.damage)
         else:
             print(self.description_miss)
+
+class EnemyActionWait(EnemyAction):
+    """
+    Enemy wait
+    """
+    def __init__(self, attackname, attackdef):
+        super().__init__(attackname, attackdef)
+        self.description = attackdef.get("desc", "It attacks you")
+    def _game_use(self, player, enemy):
+        print(self.description)
+
+def parse_enemy_action(actionname, actiondata):
+    atype = actiondata.get("type")
+    if atype == "attack":
+        return EnemyAttack(actionname, actiondata)
+    elif atype == "wait":
+        return EnemyAttack(actionname, actiondata)
+    else:
+        print("Unknown enemy attack type '{}'".format(atype))
+        return None
 
 class GameEnemy:
     """
@@ -63,13 +107,12 @@ class GameEnemy:
         self.description = enemydata.get("desc", "")
         self.defense = enemydata.get("defense", 1)
         self.attacks = []
+        self.next_action = None
         if "actions" in enemydata:
             for actionname, actiondata in enemydata["actions"].items():
-                atype = actiondata.get("type")
-                if atype == "attack":
-                    self.attacks.append(EnemyAttack(actionname, actiondata))
-                else:
-                    print("Unknown enemy attack type '{}'".format(atype))
+                action = parse_enemy_action(actionname, actiondata)
+                if action != None:
+                    self.attacks.append(action)
         # -1 is no curse.
         # Player's attack sets curses to 1. This way, curse doesn't get removed
         # for the player's next attack. Curse is also decremented *before* the
@@ -112,8 +155,15 @@ class GameEnemy:
         if len(self.attacks) == 0:
             print("The {} can't do anything.".format(self.name))
         else:
-            atk = random.choice(self.attacks)
-            atk.use(gamedata.player, self)
+            if self.next_action != None:
+                a = self.next_action
+                self.next_action = None
+                a.use(gamedata.player, self)
+            elif len(self.attacks) > 0:
+                atk = random.choice(self.attacks)
+                atk.use(gamedata.player, self)
+            else:
+                print("Does nothing")
     def fmt_name(self):
         return gameutil.FMT_ENEMY.format(self.name)
     def __str__(self):
