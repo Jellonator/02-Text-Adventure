@@ -89,7 +89,7 @@ def parse_enemy_action(actionname, actiondata):
     if atype == "attack":
         return EnemyAttack(actionname, actiondata)
     elif atype == "wait":
-        return EnemyAttack(actionname, actiondata)
+        return EnemyActionWait(actionname, actiondata)
     else:
         print("Unknown enemy attack type '{}'".format(atype))
         return None

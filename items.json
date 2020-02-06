@@ -19,12 +19,12 @@
         "durability": 3,
         "attacks": {
             "strike": {
-                "info": "deals 3 damage",
+                "info": "deals 4 damage",
                 "type": "attack",
                 "target": "single",
                 "stat": "STR",
                 "bonus": 2,
-                "damage": 3
+                "damage": 4
             }
         },
         "weight": 2

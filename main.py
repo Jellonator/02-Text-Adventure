@@ -361,7 +361,7 @@ def render(gamedata):
                 revealed = exitdata.get("revealed", False)
                 if (exittarget in gamedata.explored or revealed) and exittarget in gamedata.level:
                     exitinfo = gamedata.level[exittarget]["name"]
-                print("    {}. {}:\t{}".format(i, gameutil.FMT_OPTION.format(exitname), exitinfo))
+                print("    {}. {}:\t{}".format(i + 1, gameutil.FMT_OPTION.format(exitname), exitinfo))
             print("Enter 'move location' to move to another location")
         else:
             print("There doesn't appear to be anywhere to go...")
@@ -376,6 +376,7 @@ def update(gamedata):
     gamedata.remove_dead_enemies()
     if gamedata.room in END_EXITS:
         print("Congratulations, you win!")
+        input("Press enter to continue...")
         gamedata.finished = True
     if gamedata.player.is_dead():
         reason = gamedata.player.get_cause_of_death()
