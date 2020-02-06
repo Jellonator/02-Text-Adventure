@@ -15,6 +15,7 @@ FILE_ITEMS = 'items.json'
 FILE_CLASSES = "classes.json"
 FILE_ENEMIES = "enemies.json"
 INTERACT_COMMANDS = ["look", "search", "take", "open"]
+END_EXITS = ["END"]
 
 def load_json(name: str):
     """
@@ -373,6 +374,9 @@ def update(gamedata):
     Update the game.
     """
     gamedata.remove_dead_enemies()
+    if gamedata.room in END_EXITS:
+        print("Congratulations, you win!")
+        gamedata.finished = True
     if gamedata.player.is_dead():
         reason = gamedata.player.get_cause_of_death()
         if reason == "str":

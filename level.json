@@ -283,6 +283,13 @@
         ]
     },
     "END": {
-
+        "name": "Tower inside",
+        "desc": "You have made it into the Necromancer's keep. Unfortunately for everyone\ninvolved, including you and the Necromancer, the keep has yet to be constructed.\nThe rafters are bare and you can see the moon through the roof. There are\nseveral zombies wearing hard hats strewn about. They don't seem to be paying\nyou any mind. In an attempt at good sportmanship, you decide to come back later\nwhen the tower has been fully constructed.",
+        "exits": [
+            {
+                "exit": "SOUTH",
+                "target": "DRAWBRIDGE"
+            }
+        ]
     }
 }
